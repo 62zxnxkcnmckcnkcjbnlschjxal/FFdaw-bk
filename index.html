@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fdf3f4">
+<title>FF大王 博客</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  color-scheme:light;
+  --bg:#f6f3f8; --card:#ffffff; --text:#2a2433; --sub:#7c7486; --muted:#a99fb5;
+  --border:#eee7f0; --brand:#e8537a; --brand-soft:#fdeef2; --brand-border:#f8d7e2;
+  --shadow:0 8px 30px rgba(120,60,90,.08);
+  --radius:16px;
+}
+:root.dark{
+  color-scheme:dark;
+  --bg:#15121a; --card:#1e1a26; --text:#efe8f5; --sub:#9d92ad; --muted:#6b6278;
+  --border:#332c3f; --brand:#ff7ba1; --brand-soft:#3a2330; --brand-border:#5a3345;
+  --shadow:0 8px 30px rgba(0,0,0,.35);
+}
+html{background:var(--bg)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s}
+/* ===== 导航 ===== */
+.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;padding:12px 20px;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
+.brand .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#e8537a,#ff9a5a);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;box-shadow:0 4px 14px rgba(232,83,122,.35)}
+.brand-name{font-size:17px;font-weight:700}
+.spacer{flex:1}
+.nav-link{padding:8px 14px;border-radius:10px;font-size:14px;color:var(--sub);text-decoration:none;cursor:pointer;border:1px solid transparent;background:none;transition:all .15s}
+.nav-link:hover{background:var(--brand-soft);color:var(--brand)}
+.nav-link.on{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.theme-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.theme-btn:hover{border-color:var(--brand);color:var(--brand)}
+/* ===== 版心 ===== */
+.container{max-width:1080px;margin:24px auto;padding:0 20px;display:grid;grid-template-columns:270px 1fr;gap:22px;align-items:start}
+@media (max-width:860px){.container{grid-template-columns:1fr}}
+/* ===== 左侧卡片 ===== */
+.left .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 20px;text-align:center;box-shadow:var(--shadow)}
+.avatar{width:76px;height:76px;margin:0 auto 12px;border-radius:22px;background:linear-gradient(135deg,#e8537a,#ff9a5a);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;box-shadow:0 6px 20px rgba(232,83,122,.35)}
+.card h3{font-size:19px;margin-bottom:4px}
+.bio{font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:14px}
+.stats{display:flex;border-top:1px solid var(--border);padding-top:14px}
+.stats>div{flex:1}
+.stats b{display:block;font-size:20px;color:var(--brand)}
+.stats span{font-size:11.5px;color:var(--muted)}
+@media (max-width:860px){
+  .left .card{display:flex;align-items:center;gap:14px;text-align:left;padding:14px 16px}
+  .avatar{width:52px;height:52px;border-radius:14px;font-size:22px;margin:0}
+  .bio{margin-bottom:0;flex:1}
+  .stats{flex-direction:column;border-top:0;padding-top:0;gap:2px}
+  .stats b{font-size:15px}
+}
+/* ===== 右侧视图 ===== */
+.view{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.view[hidden]{display:none}
+.view-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.view-head h2{font-size:17px}
+.view-head .spacer{flex:1}
+/* 列表 */
+.blog{padding:22px 24px;border-bottom:1px solid var(--border)}
+.blog:last-child{border-bottom:0}
+.blog .title{font-size:20px;font-weight:700;color:var(--text);cursor:pointer;transition:color .15s}
+.blog .title:hover{color:var(--brand)}
+.blog .date{font-size:12px;color:var(--muted);margin:8px 0 10px}
+.blog .desc{font-size:14px;color:var(--sub);line-height:1.8;text-indent:2em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.blog .more{display:inline-block;margin-top:12px;padding:7px 18px;border:1.5px solid var(--brand);border-radius:8px;color:var(--brand);font-size:13px;text-decoration:none;transition:all .2s}
+.blog .more:hover{background:var(--brand);color:#fff}
+.blog .pin{display:inline-block;font-size:11px;background:var(--brand-soft);color:var(--brand);border-radius:6px;padding:2px 8px;margin-left:8px;vertical-align:2px}
+.empty{padding:60px 20px;text-align:center;color:var(--muted);font-size:14px}
+/* 正文 */
+.post{padding:28px 30px}
+.post h1{font-size:26px;margin-bottom:8px}
+.post .pdate{font-size:12.5px;color:var(--muted);margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.post .body{font-size:15px;line-height:1.9;color:var(--text);word-break:break-word}
+.post .body h1,.post .body h2,.post .body h3{margin:1.2em 0 .5em;line-height:1.4}
+.post .body h1{font-size:22px}.post .body h2{font-size:19px}.post .body h3{font-size:16.5px}
+.post .body p{margin:.6em 0}
+.post .body blockquote{border-left:4px solid var(--brand);background:var(--brand-soft);padding:10px 14px;border-radius:0 10px 10px 0;margin:1em 0;color:var(--sub)}
+.post .body pre{background:#221d2b;color:#e8e0f0;padding:14px 16px;border-radius:12px;overflow-x:auto;font-size:13px;line-height:1.7;margin:1em 0}
+.post .body code{background:var(--brand-soft);color:var(--brand);padding:2px 6px;border-radius:6px;font-size:.9em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.post .body pre code{background:none;color:inherit;padding:0}
+.post .body img{max-width:100%;border-radius:12px;margin:.6em 0}
+.post .body ul,.post .body ol{padding-left:1.6em;margin:.6em 0}
+.post .body a{color:var(--brand)}
+.post .body hr{border:0;border-top:1px solid var(--border);margin:1.4em 0}
+.back-btn{padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--sub);cursor:pointer;font-size:13px;transition:all .15s}
+.back-btn:hover{color:var(--brand);border-color:var(--brand)}
+/* 管理列表 */
+.mrow{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.mrow:last-child{border-bottom:0}
+.mrow .mtitle{flex:1;min-width:160px;font-size:14.5px;font-weight:600;cursor:pointer}
+.mrow .mtitle:hover{color:var(--brand)}
+.mrow .tag{font-size:11px;border-radius:6px;padding:2px 8px;background:var(--soft,#f2edf6);color:var(--sub)}
+:root.dark .mrow .tag{background:#2c2536}
+.mrow .tag.pub{background:var(--brand-soft);color:var(--brand)}
+.mrow .mdate{font-size:11.5px;color:var(--muted)}
+.mrow .act{display:flex;gap:8px}
+.mrow .act button{padding:5px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--sub);cursor:pointer;font-size:12.5px;transition:all .15s}
+.mrow .act button:hover{color:var(--brand);border-color:var(--brand)}
+.mrow .act button.del:hover{color:#e0455a;border-color:#e0455a}
+/* 编辑器 */
+.editor{padding:20px}
+.ed-field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.ed-field label{font-size:12.5px;color:var(--sub);font-weight:600}
+.ed-field input[type=text]{height:44px;padding:0 14px;border:1px solid var(--border);border-radius:10px;font-size:16px;background:var(--bg);color:var(--text);outline:none;transition:border .15s}
+.ed-field input[type=text]:focus{border-color:var(--brand)}
+.ed-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.ed-toolbar .tip{font-size:12px;color:var(--muted)}
+textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var(--border);border-radius:10px;font-size:14px;line-height:1.7;background:var(--bg);color:var(--text);outline:none;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;transition:border .15s}
+textarea#edContent:focus{border-color:var(--brand)}
+.ed-opts{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:10px}
+.ed-opts label{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--sub);cursor:pointer}
+.ed-opts input{accent-color:var(--brand);width:15px;height:15px}
+.ed-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:10px 22px;border-radius:10px;border:0;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-primary{background:linear-gradient(135deg,#e8537a,#ff9a5a);color:#fff;box-shadow:0 4px 14px rgba(232,83,122,.3)}
+.btn-primary:hover{filter:brightness(1.06)}
+.btn-ghost{border:1px solid var(--border);background:var(--card);color:var(--sub)}
+.btn-ghost:hover{color:var(--brand);border-color:var(--brand)}
+.preview{display:none;border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-top:10px;background:var(--bg);font-size:15px;line-height:1.9}
+.preview.show{display:block}
+.preview h1,.preview h2,.preview h3{margin:.9em 0 .4em}
+.preview pre{background:#221d2b;color:#e8e0f0;padding:12px 14px;border-radius:10px;overflow-x:auto}
+.preview code{background:var(--brand-soft);color:var(--brand);padding:2px 6px;border-radius:5px}
+.preview img{max-width:100%;border-radius:10px}
+/* toast */
+#toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(80px);background:#2a2433;color:#fff;padding:11px 20px;border-radius:12px;font-size:13.5px;opacity:0;transition:all .3s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.foot{max-width:1080px;margin:18px auto 30px;padding:0 20px;text-align:center;font-size:11.5px;color:var(--muted)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="#">
+    <span class="logo">F</span><span class="brand-name">FF大王 博客</span>
+  </a>
+  <div class="spacer"></div>
+  <a class="nav-link on" data-view="list">主页</a>
+  <a class="nav-link" data-action="write">写文章</a>
+  <a class="nav-link" data-action="manage">管理</a>
+  <button class="theme-btn" id="themeBtn" title="切换主题">☀️</button>
+</nav>
+
+<div class="container">
+  <aside class="left">
+    <div class="card">
+      <div class="avatar">FF</div>
+      <h3>FF大王</h3>
+      <p class="bio">光遇资深玩家 · 创作者<br>记录游戏与生活</p>
+      <div class="stats">
+        <div><b id="statPosts">0</b><span>文章</span></div>
+        <div><b id="statCats">1</b><span>分类</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="right">
+    <!-- 列表 -->
+    <section class="view" id="viewList">
+      <div class="view-head"><h2>全部文章</h2></div>
+      <div id="listWrap"><div class="empty">加载中…</div></div>
+    </section>
+    <!-- 正文 -->
+    <section class="view" id="viewPost" hidden>
+      <div class="view-head"><button class="back-btn" data-view="list">← 返回</button><h2>文章</h2></div>
+      <div class="post" id="postBody"></div>
+    </section>
+    <!-- 管理 -->
+    <section class="view" id="viewManage" hidden>
+      <div class="view-head"><h2>文章管理</h2><div class="spacer"></div><button class="btn btn-primary" data-action="write" style="padding:8px 16px;font-size:13px">＋ 写文章</button></div>
+      <div id="manageWrap"><div class="empty">加载中…</div></div>
+    </section>
+    <!-- 编辑器 -->
+    <section class="view" id="viewEditor" hidden>
+      <div class="view-head"><button class="back-btn" data-action="manage">← 返回</button><h2 id="edTitle">写文章</h2></div>
+      <div class="editor">
+        <div class="ed-field"><label>标题</label><input type="text" id="edTitleInput" placeholder="文章标题"></div>
+        <div class="ed-field">
+          <label>内容（支持 Markdown）</label>
+          <div class="ed-toolbar">
+            <button class="btn btn-ghost" id="edPreviewBtn" style="padding:6px 14px;font-size:13px">预览</button>
+            <span class="tip">支持 # 标题 / **加粗** / `代码` / - 列表 / [链接](url) / ```代码块```</span>
+          </div>
+          <textarea id="edContent" placeholder="# 标题&#10;&#10;正文内容…&#10;&#10;## 小标题&#10;- 列表项&#10;&#10;**加粗** 与 `行内代码`"></textarea>
+          <div class="preview" id="edPreview"></div>
+        </div>
+        <div class="ed-opts">
+          <label><input type="checkbox" id="edPin"> 置顶</label>
+          <label><input type="checkbox" id="edHidden"> 隐藏（不对外展示）</label>
+          <label><input type="checkbox" id="edAnnounce"> 作为弹窗公告使用（发布后访问工作台时自动弹出）</label>
+        </div>
+        <div class="ed-actions">
+          <button class="btn btn-ghost" id="edDraft">保存草稿</button>
+          <button class="btn btn-primary" id="edPublish">发布</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="foot">FF大王 博客 · 非官方个人自用 · 数据云端同步</div>
+<div id="toast"></div>
+
+<script>
+/* ===== 工具 ===== */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function $(id){ return document.getElementById(id); }
+function toast(msg){
+  var t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._h); t._h=setTimeout(function(){ t.classList.remove('show'); },2600);
+}
+function fmt(ts){ if(!ts) return ''; var d=new Date(ts); function p(n){return n<10?'0'+n:n;}
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()); }
+
+/* ===== Markdown 渲染（与收益工作台同款） ===== */
+function markdownToHtml(raw){
+  var text=String(raw||'');
+  var codeBlocks=[];
+  text=text.replace(/```([\s\S]*?)```/g,function(m,code){ codeBlocks.push(esc(code)); return '\nCODEBLOCK_'+(codeBlocks.length-1)+'_\n'; });
+  var inlineCodes=[];
+  text=text.replace(/`([^`]+)`/g,function(m,code){ inlineCodes.push(esc(code)); return 'INLINECODE_'+(inlineCodes.length-1)+'_'; });
+  text=esc(text);
+  var lines=text.split('\n'); var out=[]; var i=0;
+  function renderInline(str){
+    str=str.replace(/\*\*\*(.*?)\*\*\*/g,'<strong><em>$1</em></strong>');
+    str=str.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    str=str.replace(/\*(.*?)\*/g,'<em>$1</em>');
+    str=str.replace(/\[([^\]]+)\]\(([^)]+)\)/g,function(m,t,h){ var s=h.trim(); if(!/^(https?:|mailto:|#)/i.test(s)) s='#'; return '<a href="'+esc(s)+'" target="_blank" rel="noopener">'+t+'</a>'; });
+    str=str.replace(/!\[([^\]]*)\]\(([^)]+)\)/g,function(m,alt,src){ var s=src.trim(); if(!/^https?:/i.test(s)) return '<span>[图片链接不安全]</span>'; return '<img src="'+esc(s)+'" alt="'+esc(alt)+'" loading="lazy" referrerpolicy="no-referrer" style="max-width:100%">'; });
+    inlineCodes.forEach(function(c,idx){ str=str.replace('INLINECODE_'+idx+'_','<code>'+c+'</code>'); });
+    str=str.replace(/\n/g,'<br>');
+    return str;
+  }
+  while(i<lines.length){
+    var line=lines[i]||''; var tr=line.trim();
+    if(tr===''){i++;continue;}
+    if(tr.match(/^CODEBLOCK_\d+_$/)){ var idx=parseInt(tr.match(/^CODEBLOCK_(\d+)_$/)[1]); out.push('<pre><code>'+codeBlocks[idx]+'</code></pre>'); i++; continue; }
+    var h=tr.match(/^(#{1,6})\s+(.*)/);
+    if(h){ var lv=Math.min(h[1].length,6); out.push('<h'+lv+'>'+renderInline(h[2])+'</h'+lv+'>'); i++; continue; }
+    if(tr.match(/^---+/)){ out.push('<hr>'); i++; continue; }
+    if(tr.match(/^&gt;\s?/)){ var ql=[]; while(i<lines.length&&lines[i].trim().match(/^&gt;\s?/)){ ql.push(lines[i].trim().replace(/^&gt;\s?/,'')); i++; } out.push('<blockquote>'+renderInline(ql.join('\n'))+'</blockquote>'); continue; }
+    if(tr.match(/^[-*]\s/)){ var items=[]; while(i<lines.length&&lines[i].trim().match(/^[-*]\s/)){ items.push(lines[i].trim().replace(/^[-*]\s/,'')); i++; } out.push('<ul>'+items.map(function(it){return '<li>'+renderInline(it)+'</li>';}).join('')+'</ul>'); continue; }
+    if(tr.match(/^\d+\.\s/)){ var items=[]; while(i<lines.length&&lines[i].trim().match(/^\d+\.\s/)){ items.push(lines[i].trim().replace(/^\d+\.\s/,'')); i++; } out.push('<ol>'+items.map(function(it){return '<li>'+renderInline(it)+'</li>';}).join('')+'</ol>'); continue; }
+    var pl=[]; while(i<lines.length&&lines[i].trim()!==''&&!lines[i].trim().match(/^CODEBLOCK_\d+_$/)){ pl.push(lines[i].trim()); i++; }
+    out.push('<p>'+renderInline(pl.join(' '))+'</p>');
+  }
+  return out.join('');
+}
+
+/* ===== 主题 ===== */
+(function(){
+  var dark=localStorage.getItem('ffdaz_theme')==='dark'||(localStorage.getItem('ffdaz_theme')===null&&window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+  apply(dark);
+  function apply(d){ document.documentElement.classList.toggle('dark',d); $('themeBtn').textContent=d?'🌙':'☀️';
+    var m=document.querySelector('meta[name=theme-color]'); if(m) m.setAttribute('content',d?'#15121a':'#fdf3f4'); }
+  $('themeBtn').addEventListener('click',function(){ dark=!dark; localStorage.setItem('ffdaz_theme',dark?'dark':'light'); apply(dark); });
+})();
+
+/* ===== 状态 ===== */
+var state={ articles:[], view:'list', editing:null };
+var API='/api/blog';
+
+function apiGet(url){ return fetch(url,{credentials:'same-origin'}).then(function(r){return r.json().catch(function(){return {};});}); }
+function apiPost(body){ return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(body)}).then(function(r){return r.json().catch(function(){return {};});}); }
+function apiDelete(id){ return fetch(API+'/'+encodeURIComponent(id),{method:'DELETE',credentials:'same-origin'}).then(function(r){return r.json().catch(function(){return {};});}); }
+
+/* ===== 视图切换 ===== */
+function show(v){
+  state.view=v;
+  ['list','post','manage','editor'].forEach(function(k){
+    var el=$('view'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(el) el.hidden=(k!==v);
+  });
+  document.querySelectorAll('.nav-link').forEach(function(a){
+    a.classList.toggle('on',a.dataset.view===v||(a.dataset.action==='manage'&&v==='manage')||(a.dataset.action==='write'&&v==='editor'));
+  });
+  if(v==='list'){ loadList(); }
+  if(v==='manage'){ loadManage(); }
+}
+
+/* ===== 列表 ===== */
+function loadList(){
+  var wrap=$('listWrap'); wrap.innerHTML='<div class="empty">加载中…</div>';
+  apiGet(API+'?size=50').then(function(d){
+    if(!d||!d.ok){ wrap.innerHTML='<div class="empty">加载失败：'+(d&&d.error||'网络异常')+'</div>'; return; }
+    var list=(d.articles||[]).filter(function(a){ return a.status==='published'; });
+    $('statPosts').textContent=list.length;
+    if(!list.length){ wrap.innerHTML='<div class="empty">还没有文章，点击右上角「写文章」开始吧</div>'; return; }
+    wrap.innerHTML=list.map(function(a){
+      return '<div class="blog"><div class="title" data-id="'+esc(a.id)+'">'+esc(a.title)+(a.pinned?'<span class="pin">置顶</span>':'')+'</div>'+
+        '<div class="date">发布于 '+fmt(a.updatedAt)+'</div>'+
+        '<div class="desc">'+esc(a.summary||'')+'</div>'+
+        '<a class="more" href="javascript:;" data-id="'+esc(a.id)+'">阅读全文 &gt;&gt;</a></div>';
+    }).join('');
+    wrap.querySelectorAll('[data-id]').forEach(function(el){
+      el.addEventListener('click',function(){ openPost(el.getAttribute('data-id')); });
+    });
+  }).catch(function(){ wrap.innerHTML='<div class="empty">加载失败：网络异常</div>'; });
+}
+
+/* ===== 正文 ===== */
+function openPost(id){
+  apiGet(API+'/'+encodeURIComponent(id)).then(function(d){
+    if(!d||!d.ok){ toast('文章不存在或未授权'); return; }
+    var a=d.article;
+    $('postBody').innerHTML='<h1>'+esc(a.title)+(a.pinned?'<span class="pin">置顶</span>':'')+'</h1>'+
+      '<div class="pdate">发布于 '+fmt(a.updatedAt)+'</div>'+
+      '<div class="body">'+markdownToHtml(a.content)+'</div>';
+    show('post');
+    window.scrollTo(0,0);
+  }).catch(function(){ toast('加载失败'); });
+}
+
+/* ===== 管理 ===== */
+function loadManage(){
+  var wrap=$('manageWrap'); wrap.innerHTML='<div class="empty">加载中…</div>';
+  apiGet(API+'?size=50').then(function(d){
+    if(!d||!d.ok){
+      if(d&&d.error==='未授权'){ wrap.innerHTML='<div class="empty">需要授权才能管理（站点开启访问验证时请先解锁）</div>'; }
+      else wrap.innerHTML='<div class="empty">加载失败：'+(d&&d.error||'网络异常')+'</div>';
+      return;
+    }
+    var list=d.articles||[];
+    if(!list.length){ wrap.innerHTML='<div class="empty">还没有文章</div>'; return; }
+    wrap.innerHTML=list.map(function(a){
+      var tag=a.status==='draft'?'<span class="tag">草稿</span>':('<span class="tag pub">已发布</span>');
+      if(a.announce) tag+='<span class="tag">公告</span>';
+      if(a.pinned) tag+='<span class="tag">置顶</span>';
+      return '<div class="mrow"><span class="mtitle" data-id="'+esc(a.id)+'">'+esc(a.title)+'</span>'+tag+
+        '<span class="mdate">'+fmt(a.updatedAt)+'</span>'+
+        '<span class="act"><button data-edit="'+esc(a.id)+'">编辑</button><button class="del" data-del="'+esc(a.id)+'">删除</button></span></div>';
+    }).join('');
+    wrap.querySelectorAll('.mtitle').forEach(function(el){ el.addEventListener('click',function(){ openPost(el.getAttribute('data-id')); }); });
+    wrap.querySelectorAll('[data-edit]').forEach(function(el){ el.addEventListener('click',function(){ openEditor(el.getAttribute('data-edit')); }); });
+    wrap.querySelectorAll('[data-del]').forEach(function(el){
+      el.addEventListener('click',function(){
+        if(!confirm('确定删除这篇文章？')) return;
+        apiDelete(el.getAttribute('data-del')).then(function(d){
+          if(d&&d.ok){ toast('已删除'); loadManage(); }
+          else toast(d&&d.error||'删除失败');
+        });
+      });
+    });
+  }).catch(function(){ wrap.innerHTML='<div class="empty">加载失败：网络异常</div>'; });
+}
+
+/* ===== 编辑器 ===== */
+function openEditor(id){
+  state.editing=id||null;
+  $('edTitle').textContent=id?'编辑文章':'写文章';
+  $('edTitleInput').value=''; $('edContent').value='';
+  $('edPin').checked=false; $('edHidden').checked=false; $('edAnnounce').checked=false;
+  $('edPreview').innerHTML=''; $('edPreview').classList.remove('show');
+  $('edPreviewBtn').textContent='预览';
+  if(id){
+    apiGet(API+'/'+encodeURIComponent(id)).then(function(d){
+      if(!d||!d.ok){ toast('文章不存在或未授权'); return; }
+      var a=d.article;
+      $('edTitleInput').value=a.title||''; $('edContent').value=a.content||'';
+      $('edPin').checked=!!a.pinned; $('edHidden').checked=!!a.hidden; $('edAnnounce').checked=!!a.announce;
+      show('editor');
+    });
+  } else { show('editor'); }
+}
+
+function saveArticle(status){
+  var title=$('edTitleInput').value.trim();
+  var content=$('edContent').value;
+  if(!title){ toast('请填写标题'); return; }
+  if(status==='published'&&!content){ toast('正文不能为空'); return; }
+  var summary=content.replace(/```[\s\S]*?```/g,'').replace(/[#*`>\-\[\]()!]/g,'').replace(/\s+/g,' ').trim().slice(0,140);
+  apiPost({ id:state.editing||undefined, title:title, content:content, summary:summary,
+    status:status, pinned:$('edPin').checked, hidden:$('edHidden').checked, announce:$('edAnnounce').checked })
+    .then(function(d){
+      if(d&&d.ok){
+        toast(status==='draft'?'已保存草稿':'已发布：'+title);
+        state.editing=null;
+        loadManage(); show('manage');
+      } else {
+        toast(d&&d.error||'保存失败（可能需要授权）');
+      }
+    }).catch(function(){ toast('网络异常，保存失败'); });
+}
+
+/* ===== 事件 ===== */
+document.querySelectorAll('.nav-link').forEach(function(a){
+  a.addEventListener('click',function(){
+    if(a.dataset.view){ show(a.dataset.view); return; }
+    if(a.dataset.action==='write'){ openEditor(); return; }
+    if(a.dataset.action==='manage'){ show('manage'); return; }
+  });
+});
+$('edPreviewBtn').addEventListener('click',function(){
+  var pv=$('edPreview'); pv.classList.toggle('show');
+  if(pv.classList.contains('show')){ pv.innerHTML=markdownToHtml($('edContent').value); this.textContent='隐藏预览'; }
+  else this.textContent='预览';
+});
+$('edDraft').addEventListener('click',function(){ saveArticle('draft'); });
+$('edPublish').addEventListener('click',function(){ saveArticle('published'); });
+
+/* 启动 */
+show('list');
+</script>
+</body>
+</html>
