@@ -167,6 +167,20 @@ textarea#edContent:focus{border-color:var(--brand)}
 .chat-key-bar .ks{font-size:12px;color:var(--muted)}
 .chat-key-bar input{flex:1;min-width:180px;height:34px;padding:0 10px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;background:var(--bg);color:var(--text);outline:none}
 .chat-key-bar button{padding:6px 14px;border:0;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;background:var(--brand-soft);color:var(--brand)}
+.chat-model-bar{display:flex;align-items:center;gap:8px;padding:10px 20px;border-top:1px solid var(--border);background:var(--card);flex-wrap:wrap}
+.chat-model-bar .ml{font-size:12px;color:var(--muted)}
+.chat-model-bar select{height:32px;padding:0 8px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;background:var(--bg);color:var(--text);outline:none;max-width:260px}
+.chat-model-bar select:focus{border-color:var(--brand)}
+.chat-img-btn{flex-shrink:0;width:42px;height:42px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--sub);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.chat-img-btn:hover{color:var(--brand);border-color:var(--brand)}
+.chat-img-btn[hidden]{display:none}
+.chat-img-preview{display:flex;gap:8px;flex-wrap:wrap;padding:8px 20px 0;background:var(--card)}
+.chat-img-preview[hidden]{display:none}
+.chat-img-preview .ip{position:relative;width:64px;height:64px;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.chat-img-preview .ip img{width:100%;height:100%;object-fit:cover;display:block}
+.chat-img-preview .ip button{position:absolute;top:3px;right:3px;width:18px;height:18px;border:0;border-radius:50%;background:rgba(0,0,0,.55);color:#fff;font-size:11px;line-height:18px;cursor:pointer;padding:0}
+.chat-msg .msg-img{max-width:220px;max-height:220px;border-radius:10px;display:block;margin-top:8px}
+.chat-msg .img-loading{color:var(--muted);font-style:italic}
 /* toast */
 #toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(80px);background:#2a2433;color:#fff;padding:11px 20px;border-radius:12px;font-size:13.5px;opacity:0;transition:all .3s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
@@ -176,7 +190,7 @@ textarea#edContent:focus{border-color:var(--brand)}
 <body>
 <nav class="nav">
   <a class="brand" href="#">
-    <span class="logo" id="brandLogo"><img id="brandLogoImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px"><span id="brandLogoText">F</span></span><span class="brand-name" id="brandName">FF大王 博客</span>
+    <span class="logo">F</span><span class="brand-name">FF大王 博客</span>
   </a>
   <div class="spacer"></div>
   <a class="nav-link on" data-view="list">主页</a>
@@ -184,11 +198,21 @@ textarea#edContent:focus{border-color:var(--brand)}
   <a class="nav-link" data-action="manage">管理</a>
   <a class="nav-link" data-view="links">友链</a>
   <a class="nav-link" data-view="chat">DeepSeek</a>
-  <a class="nav-link" data-view="settings">设置</a>
   <button class="theme-btn" id="themeBtn" title="切换主题">☀️</button>
 </nav>
 
 <div class="container">
+  <aside class="left">
+    <div class="card">
+      <div class="avatar">FF</div>
+      <h3>FF大王</h3>
+      <p class="bio">光遇资深玩家 · 创作者<br>记录游戏与生活</p>
+      <div class="stats">
+        <div><b id="statPosts">0</b><span>文章</span></div>
+        <div><b id="statCats">1</b><span>分类</span></div>
+      </div>
+    </div>
+  </aside>
 
   <main class="right">
     <!-- 列表 -->
@@ -245,7 +269,7 @@ textarea#edContent:focus{border-color:var(--brand)}
     <!-- DeepSeek 聊天 -->
     <section class="view" id="viewChat" hidden>
       <div class="view-head">
-        <div style="display:flex;align-items:center;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#1a7f64,#2dd4bf);display:flex;align-items:center;justify-content:center;">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
           </div>
@@ -253,50 +277,37 @@ textarea#edContent:focus{border-color:var(--brand)}
         </div>
       </div>
       <div class="chat-wrap">
+        <div class="chat-model-bar">
+          <span class="ml">模型：</span>
+          <select id="dsModelSelect">
+            <option value="auto">自动模式（智能选择）</option>
+            <option value="deepseek-chat">官方 DeepSeek（deepseek-chat）</option>
+            <option value="deepseek/deepseek-flash">腾讯云 DeepSeek-V4.1-Flash（视觉）</option>
+          </select>
+          <span id="dsModelHint" style="font-size:11.5px;color:var(--muted)"></span>
+        </div>
         <div class="chat-box" id="chatBox"><div class="chat-msg bot">你好，我是 DeepSeek 助手（通过 Cloudflare 转发）。有什么可以帮你？</div></div>
         <div class="chat-presets" id="chatPresets"></div>
+        <div class="chat-img-preview" id="chatImgPreview" hidden></div>
         <div class="chat-key-bar" id="chatKeyBar" hidden>
-          <span class="ks">本地密钥：</span>
-          <input type="password" id="dsApiKey" placeholder="sk-...（留空则用服务器 DEEPSEEK_API_KEY）">
+          <span class="ks" id="dsKeyLabel">本地密钥：</span>
+          <input type="password" id="dsApiKey" placeholder="sk-...（留空则用服务器环境变量）">
           <button id="dsKeySave">保存</button>
         </div>
         <form class="chat-input-wrap" id="chatForm">
-          <input id="chatInput" placeholder="输入消息..." autocomplete="off" autocapitalize="off">
+          <button type="button" class="chat-img-btn" id="chatImgBtn" title="上传图片（仅视觉模型支持）" hidden>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </button>
+          <input type="file" id="chatImgFile" accept="image/jpeg,image/png,image/gif,image/webp" hidden>
+          <input id="chatInput" placeholder="输入消息...（选视觉模型可附图片）" autocomplete="off" autocapitalize="off">
           <button type="submit" class="chat-send">发送</button>
         </form>
-      </div>
-    </section>
-    <!-- 设置 -->
-    <section class="view" id="viewSettings" hidden>
-      <div class="view-head"><h2>设置</h2><div class="spacer"></div><span style="font-size:12px;color:var(--muted)">云端同步 · 换设备自动生效</span></div>
-      <div style="padding:20px;display:flex;flex-direction:column;gap:18px">
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <label style="font-size:13px;font-weight:600">网站标题</label>
-          <input type="text" id="siteTitle" placeholder="FF大王 博客" style="height:40px;padding:0 12px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:var(--bg);color:var(--text);outline:none">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <label style="font-size:13px;font-weight:600">网站 Logo（图片）</label>
-          <div style="display:flex;align-items:center;gap:12px">
-            <div id="siteLogoPreview" style="width:44px;height:44px;border-radius:12px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);font-size:18px;font-weight:800;color:var(--brand)">F</div>
-            <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0">
-              <input type="text" id="siteLogoUrl" placeholder="图片链接（https://...）" style="height:36px;padding:0 10px;border:1px solid var(--border);border-radius:9px;font-size:13px;background:var(--bg);color:var(--text);outline:none">
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <label style="padding:7px 14px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;background:var(--brand-soft);color:var(--brand)">上传图片<input type="file" id="siteLogoFile" accept="image/*" style="display:none"></label>
-                <button type="button" id="siteLogoClear" style="padding:7px 14px;border:1px solid var(--border);border-radius:9px;font-size:12.5px;background:var(--bg);color:var(--muted);cursor:pointer">清除 Logo</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:4px">
-          <button class="btn btn-primary" id="siteSaveBtn" style="padding:0 22px;height:38px">保存设置</button>
-        </div>
-        <div style="font-size:12px;color:var(--muted);line-height:1.7">设置保存在浏览器本地，并同步到云端（Cloudflare KV），换设备打开会自动读取。上传的 Logo 会以图片形式存到云端。</div>
       </div>
     </section>
   </main>
 </div>
 
-<div class="foot" id="footLine">FF大王 博客 · 非官方个人自用 · 数据云端同步</div>
+<div class="foot">FF大王 博客 · 非官方个人自用 · 数据云端同步</div>
 <div id="toast"></div>
 
 <script>
@@ -365,7 +376,7 @@ function apiDelete(id){ return fetch(API+'/'+encodeURIComponent(id),{method:'DEL
 /* ===== 视图切换 ===== */
 function show(v){
   state.view=v;
-  ['list','post','manage','editor','links','chat','settings'].forEach(function(k){
+  ['list','post','manage','editor','links','chat'].forEach(function(k){
     var el=$('view'+k.charAt(0).toUpperCase()+k.slice(1));
     if(el) el.hidden=(k!==v);
   });
@@ -573,7 +584,7 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
   try{ linksPull(); }catch(e){}
 })();
 
-/** ===== DeepSeek 助手（/api/deepseek，服务端 env 密钥优先） ===== */
+/** ===== DeepSeek 助手（/api/deepseek，官方 + 腾讯云 TokenHub 多模型 + 图片上传） ===== */
 (function(){
   var box=document.getElementById('chatBox');
   var form=document.getElementById('chatForm');
@@ -582,24 +593,102 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
   var keyBar=document.getElementById('chatKeyBar');
   var keyInp=document.getElementById('dsApiKey');
   var keySave=document.getElementById('dsKeySave');
+  var keyLabel=document.getElementById('dsKeyLabel');
+  var modelSel=document.getElementById('dsModelSelect');
+  var modelHint=document.getElementById('dsModelHint');
+  var imgBtn=document.getElementById('chatImgBtn');
+  var imgFile=document.getElementById('chatImgFile');
+  var imgPrev=document.getElementById('chatImgPreview');
+
   var localKey='';
   try{ localKey=localStorage.getItem('ffdaz_dsKey')||''; }catch(e){}
-  var envKey=false;
+  var savedModel='';
+  try{ savedModel=localStorage.getItem('ffdaz_dsModel')||''; }catch(e){}
+  var envStatus={deepseek:false,tencent:false};
+  var pendingImages=[]; // dataURL 列表
+
+  // 视觉模型白名单（支持图片理解）
+  var VISION_MODELS={'deepseek/deepseek-flash':1,'deepseek/deepseek-v4-flash-vision-exp':1};
+
+  function curModel(){ return modelSel?modelSel.value:''; }
+  function providerOf(){ var m=curModel()||''; if(!m||m==='auto') return 'auto'; return m.indexOf('/')>=0?'tencent':'deepseek'; }
+  function isVision(){ var m=curModel()||''; if(!m||m==='auto') return true; return VISION_MODELS[m]===1 || m.indexOf('vision')>=0; }
+
+  function syncUI(){
+    var p=providerOf();
+    var hasEnv=!!envStatus[p];
+    if(keyBar) keyBar.hidden=hasEnv;
+    if(keyLabel) keyLabel.textContent=(p==='auto'?'服务器密钥：':(p==='tencent'?'腾讯云密钥：':'本地密钥：'));
+    if(keyInp){
+      keyInp.placeholder=(p==='auto'?'留空则用服务器环境变量（官方/腾讯自动选择）':(p==='tencent'?'留空则用服务器 TENCENT_API_KEY':'留空则用服务器 DEEPSEEK_API_KEY'));
+      keyInp.value=localKey||'';
+    }
+    if(imgBtn) imgBtn.hidden=!isVision();
+    if(imgPrev && !pendingImages.length) imgPrev.hidden=true;
+    if(modelHint){
+      modelHint.textContent=p==='auto'?'自动：带图→腾讯视觉模型，纯文本→官方（按可用密钥）':(p==='tencent'?'腾讯云 TokenHub · 密钥通用 · 支持视觉':'DeepSeek 官方 API');
+    }
+  }
+
+  // 读取服务器密钥状态
   fetch('/api/deepseek?action=key-status',{credentials:'same-origin'})
     .then(function(r){ return r.json().catch(function(){ return {}; }); })
-    .then(function(d){ envKey=!!(d&&d.configured); syncBar(); })
-    .catch(function(){ envKey=false; syncBar(); });
-  function syncBar(){
-    if(!keyBar) return;
-    keyBar.hidden=!!envKey;
-    if(keyInp) keyInp.value=localKey||'';
+    .then(function(d){
+      envStatus.deepseek=!!(d&&d.deepseek);
+      envStatus.tencent=!!(d&&d.tencent);
+      if(savedModel) applyModel(savedModel);
+      syncUI();
+      if(envStatus.tencent) loadTencentModels();
+    })
+    .catch(function(){ syncUI(); });
+
+  function applyModel(m){
+    if(!modelSel) return;
+    var found=null;
+    for(var i=0;i<modelSel.options.length;i++){
+      if(modelSel.options[i].value===m){ found=true; break; }
+    }
+    if(found) modelSel.value=m;
   }
+  function persistModel(){
+    var m=curModel();
+    try{ localStorage.setItem('ffdaz_dsModel',m); }catch(e){}
+    syncUI();
+  }
+  if(modelSel){
+    modelSel.addEventListener('change',persistModel);
+    if(savedModel) applyModel(savedModel);
+  }
+
+  // 拉取腾讯云已开通模型（服务器 env 有 key 时）
+  function loadTencentModels(){
+    fetch('/api/deepseek?action=models&provider=tencent',{credentials:'same-origin'})
+      .then(function(r){ return r.json().catch(function(){ return null; }); })
+      .then(function(d){
+        if(!d||!d.data||!d.data.length) return;
+        var seen={}; for(var i=0;i<modelSel.options.length;i++) seen[modelSel.options[i].value]=1;
+        d.data.forEach(function(md){
+          var id=md&&md.id;
+          if(!id||seen[id]) return;
+          if(String(id).indexOf('deepseek')<0) return; // 只列 DeepSeek 系列
+          seen[id]=1;
+          var isV=(VISION_MODELS[id]===1||String(id).indexOf('vision')>=0);
+          var opt=document.createElement('option');
+          opt.value=id;
+          opt.textContent=(md.name||id)+(isV?'（视觉）':'');
+          modelSel.appendChild(opt);
+        });
+      })
+      .catch(function(){});
+  }
+
   if(keySave) keySave.addEventListener('click',function(){
     localKey=String(keyInp?keyInp.value:'').trim();
     try{ localStorage.setItem('ffdaz_dsKey',localKey); }catch(e){}
     toast(localKey?'本地密钥已保存（覆盖服务器密钥）':'已清空本地密钥（将使用服务器密钥）');
-    syncBar();
+    syncUI();
   });
+
   var PRESETS=['帮我写一份催平台结款的礼貌话术','分析我的收益数据该注意什么','光遇追光计划活动规则有哪些要点'];
   if(presetsEl){
     presetsEl.innerHTML=PRESETS.map(function(p){ return '<button type="button" class="chat-preset">'+esc(p)+'</button>'; }).join('');
@@ -607,6 +696,7 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
       b.addEventListener('click',function(){ if(input){ input.value=b.textContent; input.focus(); } });
     });
   }
+
   function appendMsg(role,html){
     if(!box) return;
     var d=document.createElement('div');
@@ -618,122 +708,102 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
   function mdChat(s){
     var t=String(s||'');
     t=t.replace(/```([\s\S]*?)```/g,function(m,c){ return '<pre><code>'+esc(c.trim())+'</code></pre>'; });
-    t=t.replace(/`([^`\n]+)`/g,function(m,c){ return '<code>'+esc(c)+'</code>'; });
+    t=t.replace(/\`([^\`\n]+)\`/g,function(m,c){ return '<code>'+esc(c)+'</code>'; });
     t=t.replace(/^### (.*)$/gm,'<b>$1</b>');
     t=t.replace(/^## (.*)$/gm,'<b>$1</b>');
     t=t.replace(/^# (.*)$/gm,'<b>$1</b>');
     t=t.replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');
     return t.replace(/\n/g,'<br>');
   }
+
+  /* ---- 图片上传（压缩 + 预览） ---- */
+  function readImage(file){
+    return new Promise(function(res,rej){
+      var fr=new FileReader();
+      fr.onload=function(){
+        var img=new Image();
+        img.onload=function(){
+          var max=1600;
+          var w=img.width,h=img.height;
+          if(w>max||h>max){ var r=Math.min(max/w,max/h); w=Math.round(w*r); h=Math.round(h*r); }
+          var c=document.createElement('canvas'); c.width=w; c.height=h;
+          c.getContext('2d').drawImage(img,0,0,w,h);
+          res(c.toDataURL('image/jpeg',0.85));
+        };
+        img.onerror=function(){ rej(new Error('图片解码失败')); };
+        img.src=fr.result;
+      };
+      fr.onerror=function(){ rej(new Error('文件读取失败')); };
+      fr.readAsDataURL(file);
+    });
+  }
+  function renderPreview(){
+    if(!imgPrev) return;
+    imgPrev.innerHTML=pendingImages.map(function(u,i){
+      return '<div class="ip"><img src="'+u+'" alt=""><button type="button" data-i="'+i+'" title="移除">&times;</button></div>';
+    }).join('');
+    imgPrev.hidden=!pendingImages.length;
+    imgPrev.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        pendingImages.splice(Number(b.getAttribute('data-i')),1);
+        renderPreview();
+      });
+    });
+  }
+  if(imgBtn) imgBtn.addEventListener('click',function(){ if(imgFile) imgFile.click(); });
+  if(imgFile) imgFile.addEventListener('change',function(){
+    var files=Array.prototype.slice.call(imgFile.files||[]).slice(0,3);
+    imgFile.value='';
+    Promise.all(files.map(readImage))
+      .then(function(us){
+        pendingImages=pendingImages.concat(us);
+        renderPreview();
+      })
+      .catch(function(e){ toast(e&&e.message||'图片处理失败'); });
+  });
+
   if(form) form.addEventListener('submit',function(ev){
     ev.preventDefault();
     var msg=String(input?input.value:'').trim();
-    if(!msg) return;
-    appendMsg('user',esc(msg).replace(/\n/g,'<br>'));
+    if(!msg&&!pendingImages.length) return;
+    var model=curModel();
+    var provider=providerOf();
+    // 用户气泡：文字 + 图片
+    var userHtml=esc(msg).replace(/\n/g,'<br>');
+    if(pendingImages.length){
+      userHtml='<img class="msg-img" src="'+pendingImages[0]+'" alt="图片">'+(userHtml?'<br>'+userHtml:'');
+    }
+    appendMsg('user',userHtml);
     if(input) input.value='';
+    // 组装 OpenAI 多模态 content
+    var content;
+    if(pendingImages.length){
+      var parts=[];
+      pendingImages.forEach(function(u){ parts.push({type:'image_url',image_url:{url:u}}); });
+      if(msg) parts.push({type:'text',text:msg});
+      content=parts;
+    } else {
+      content=msg;
+    }
+    var imgs=pendingImages.slice();
+    pendingImages=[]; renderPreview();
     var loading=appendMsg('bot','思考中…'); loading.classList.add('loading');
     fetch('/api/deepseek',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',
-      body:JSON.stringify({messages:[{role:'user',content:msg}],apiKey:localKey||undefined,stream:false})})
+      body:JSON.stringify({provider:provider,model:model,messages:[{role:'user',content:content}],apiKey:localKey||undefined,stream:false})})
       .then(function(r){ return r.json().catch(function(){ return {}; }); })
       .then(function(d){
         if(loading) loading.remove();
-        var content=d&&d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content;
-        if(content){ appendMsg('bot',mdChat(content)); }
+        var content2=d&&d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content;
+        if(content2){ appendMsg('bot',mdChat(content2)); }
         else appendMsg('bot','出错了：'+(d&&d.error||'接口无返回，请检查密钥配置'));
-        if(d&&d.error&&String(d.error).indexOf('密钥')>=0) syncBar();
+        if(d&&d.error&&String(d.error).indexOf('密钥')>=0) syncUI();
       })
       .catch(function(e){
         if(loading) loading.remove();
         appendMsg('bot','网络异常：'+(e&&e.message||e));
       });
   });
-})();
-
-/** ===== 站点设置（标题/Logo，localStorage + 云端 KV /api/settings） ===== */
-(function(){
-  var SITE_LS='ffdaz_site_config';
-  var cfg={title:'',logo:''};
-  try{ var c=JSON.parse(localStorage.getItem(SITE_LS)||'{}'); if(c&&typeof c==='object'){ cfg.title=c.title||''; cfg.logo=c.logo||''; } }catch(e){}
-  var titleInp=document.getElementById('siteTitle');
-  var logoUrlInp=document.getElementById('siteLogoUrl');
-  var logoFile=document.getElementById('siteLogoFile');
-  var logoClear=document.getElementById('siteLogoClear');
-  var saveBtn=document.getElementById('siteSaveBtn');
-  var preview=document.getElementById('siteLogoPreview');
-  var brandName=document.getElementById('brandName');
-  var logoImg=document.getElementById('brandLogoImg');
-  var logoText=document.getElementById('brandLogoText');
-  var footLine=document.getElementById('footLine');
-
-  function apply(){
-    var t=cfg.title||'FF大王 博客';
-    if(brandName) brandName.textContent=t;
-    if(footLine) footLine.textContent=t+' · 非官方个人自用 · 数据云端同步';
-    try{ document.title=t; }catch(e){}
-    if(logoImg && logoText){
-      if(cfg.logo){ logoImg.src=cfg.logo; logoImg.style.display='block'; logoText.style.display='none'; }
-      else { logoImg.style.display='none'; logoImg.removeAttribute('src'); logoText.style.display='flex'; }
-    }
-    if(titleInp) titleInp.value=cfg.title||'';
-    if(logoUrlInp) logoUrlInp.value=(cfg.logo&&cfg.logo.indexOf('data:')!==0)?cfg.logo:'';
-    if(preview){
-      if(cfg.logo){ preview.innerHTML='<img src="'+cfg.logo+'" style="width:100%;height:100%;object-fit:cover" alt="">'; }
-      else { preview.textContent='F'; }
-    }
-  }
-  window.__siteApply=apply;
-
-  function saveLocal(){ try{ localStorage.setItem(SITE_LS,JSON.stringify(cfg)); }catch(e){} }
-  function sitePush(){
-    fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',
-      body:JSON.stringify({title:cfg.title,logo:cfg.logo})})
-      .then(function(r){ return r.json(); })
-      .then(function(d){ if(d&&d.ok) toast('已保存到云端'); else if(d&&d.error) toast('云端同步失败：'+d.error); })
-      .catch(function(){ toast('云端同步失败：网络异常'); });
-  }
-  function saveAll(){
-    cfg.title=String(titleInp?titleInp.value:'').trim();
-    cfg.logo=String(logoUrlInp?logoUrlInp.value:'').trim();
-    saveLocal(); apply();
-    toast('设置已保存');
-    try{ sitePush(); }catch(e){}
-  }
-  if(saveBtn) saveBtn.addEventListener('click',saveAll);
-
-  if(logoUrlInp) logoUrlInp.addEventListener('change',function(){
-    var v=logoUrlInp.value.trim();
-    if(!v) return;
-    var u; try{ u=new URL(v); }catch(e){ toast('链接格式不正确'); return; }
-    if(u.protocol!=='http:'&&u.protocol!=='https:'){ toast('需以 http(s):// 开头'); return; }
-    cfg.logo=v; saveLocal(); apply();
-  });
-  if(logoFile) logoFile.addEventListener('change',function(){
-    var f=logoFile.files&&logoFile.files[0]; if(!f) return;
-    if(f.size>800*1024){ toast('图片需小于 800KB（KV 限制）'); return; }
-    var rd=new FileReader();
-    rd.onload=function(){ cfg.logo=String(rd.result); saveLocal(); apply(); toast('Logo 已读取，点「保存设置」同步到云端'); };
-    rd.onerror=function(){ toast('读取图片失败'); };
-    rd.readAsDataURL(f);
-  });
-  if(logoClear) logoClear.addEventListener('click',function(){
-    cfg.logo=''; saveLocal(); apply(); toast('已清除 Logo（点保存同步）');
-  });
-
-  // 从云端拉取（首次/换设备）
-  fetch('/api/settings',{credentials:'same-origin'})
-    .then(function(r){ return r.json().catch(function(){ return {}; }); })
-    .then(function(d){
-      if(d&&d.ok){
-        var c=d.config||{};
-        var merged=false;
-        if(c.title){ cfg.title=c.title; merged=true; }
-        if(c.logo){ cfg.logo=c.logo; merged=true; }
-        if(merged){ saveLocal(); apply(); }
-        else if(cfg.title||cfg.logo){ saveLocal(); apply(); try{ sitePush(); }catch(e){} }
-      }
-    })
-    .catch(function(){});
-  apply();
+  syncUI();
 })();
 
 /* 启动 */
