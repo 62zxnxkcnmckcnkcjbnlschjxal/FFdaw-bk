@@ -23,7 +23,7 @@
 html{background:var(--bg)}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-tap-highlight-color:transparent;transition:background .2s,color .2s}
 /* ===== 导航 ===== */
-.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;padding:12px 20px;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 20px 12px;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text)}
 .brand .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#e8537a,#ff9a5a);display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:800;color:#fff;box-shadow:0 4px 14px rgba(232,83,122,.35)}
 .brand-name{font-size:17px;font-weight:700}
