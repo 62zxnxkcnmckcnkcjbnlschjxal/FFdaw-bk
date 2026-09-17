@@ -125,6 +125,48 @@ textarea#edContent:focus{border-color:var(--brand)}
 .preview pre{background:#221d2b;color:#e8e0f0;padding:12px 14px;border-radius:10px;overflow-x:auto}
 .preview code{background:var(--brand-soft);color:var(--brand);padding:2px 6px;border-radius:5px}
 .preview img{max-width:100%;border-radius:10px}
+
+/* ===== 友链 ===== */
+.nav{flex-wrap:wrap}
+.link-form{display:flex;gap:8px;flex-wrap:wrap;padding:16px 20px;border-bottom:1px solid var(--border)}
+.link-form input{flex:1;min-width:150px;height:40px;padding:0 12px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border .15s}
+.link-form input:focus{border-color:var(--brand)}
+.mylink-list{display:flex;flex-direction:column;gap:8px;padding:16px 20px}
+.mylink-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--bg);text-decoration:none;color:var(--text);transition:all .15s}
+.mylink-item:hover{border-color:var(--brand);background:var(--brand-soft)}
+.mylink-logo-wrap{width:36px;height:36px;border-radius:10px;background:var(--card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}
+.mylink-logo{width:20px;height:20px;object-fit:contain}
+.mylink-logo-fb{font-size:14px;font-weight:700;color:var(--brand);display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.mylink-mid{flex:1;min-width:0}
+.mylink-title{display:block;font-size:14.5px;font-weight:600}
+.mylink-url{display:block;font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mylink-del{width:26px;height:26px;border:0;border-radius:8px;background:transparent;color:var(--muted);font-size:15px;cursor:pointer;flex-shrink:0}
+.mylink-del:hover{color:#e0455a;background:var(--brand-soft)}
+.link-empty{padding:36px 20px;text-align:center;color:var(--muted);font-size:13.5px}
+/* ===== DeepSeek 聊天 ===== */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 190px);min-height:340px}
+.chat-box{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:12px;background:var(--bg)}
+.chat-msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.75;white-space:pre-wrap;word-break:break-word}
+.chat-msg.user{align-self:flex-end;background:linear-gradient(135deg,#e8537a,#ff9a5a);color:#fff;border-bottom-right-radius:4px}
+.chat-msg.bot{align-self:flex-start;background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px;color:var(--text)}
+.chat-msg.bot pre{background:#221d2b;color:#e8e0f0;padding:10px 12px;border-radius:10px;overflow-x:auto;font-size:12.5px;line-height:1.6;margin:6px 0}
+.chat-msg.bot code{background:var(--brand-soft);color:var(--brand);padding:1px 5px;border-radius:5px;font-size:.9em}
+.chat-msg.bot pre code{background:none;color:inherit;padding:0}
+.chat-msg.bot a{color:var(--brand)}
+.chat-msg.loading{color:var(--muted);font-style:italic}
+.chat-presets{display:flex;gap:8px;flex-wrap:wrap;padding:10px 20px;border-top:1px solid var(--border);background:var(--card)}
+.chat-preset{padding:6px 12px;border-radius:999px;border:1px solid var(--border);background:var(--bg);color:var(--sub);font-size:12.5px;cursor:pointer;transition:all .15s}
+.chat-preset:hover{color:var(--brand);border-color:var(--brand)}
+.chat-input-wrap{display:flex;gap:8px;padding:12px 20px 16px;border-top:1px solid var(--border);background:var(--card)}
+.chat-input-wrap input{flex:1;height:42px;padding:0 14px;border:1px solid var(--border);border-radius:10px;font-size:14.5px;background:var(--bg);color:var(--text);outline:none;transition:border .15s}
+.chat-input-wrap input:focus{border-color:var(--brand)}
+.chat-send{padding:0 22px;border:0;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;background:linear-gradient(135deg,#e8537a,#ff9a5a);color:#fff}
+.chat-send:hover{filter:brightness(1.06)}
+.chat-key-bar{display:flex;align-items:center;gap:10px;padding:10px 20px;border-top:1px solid var(--border);background:var(--card);flex-wrap:wrap}
+.chat-key-bar[hidden]{display:none}
+.chat-key-bar .ks{font-size:12px;color:var(--muted)}
+.chat-key-bar input{flex:1;min-width:180px;height:34px;padding:0 10px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;background:var(--bg);color:var(--text);outline:none}
+.chat-key-bar button{padding:6px 14px;border:0;border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;background:var(--brand-soft);color:var(--brand)}
 /* toast */
 #toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(80px);background:#2a2433;color:#fff;padding:11px 20px;border-radius:12px;font-size:13.5px;opacity:0;transition:all .3s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
@@ -140,6 +182,8 @@ textarea#edContent:focus{border-color:var(--brand)}
   <a class="nav-link on" data-view="list">主页</a>
   <a class="nav-link" data-action="write">写文章</a>
   <a class="nav-link" data-action="manage">管理</a>
+  <a class="nav-link" data-view="links">友链</a>
+  <a class="nav-link" data-view="chat">DeepSeek</a>
   <button class="theme-btn" id="themeBtn" title="切换主题">☀️</button>
 </nav>
 
@@ -195,6 +239,41 @@ textarea#edContent:focus{border-color:var(--brand)}
           <button class="btn btn-ghost" id="edDraft">保存草稿</button>
           <button class="btn btn-primary" id="edPublish">发布</button>
         </div>
+      </div>
+    </section>
+    <!-- 友链 -->
+    <section class="view" id="viewLinks" hidden>
+      <div class="view-head"><h2>友链</h2><div class="spacer"></div><span style="font-size:12px;color:var(--muted)">点击直达 · 云端同步</span></div>
+      <form class="link-form" id="myLinkForm">
+        <input type="text" id="myLinkTitle" placeholder="网站名称">
+        <input type="url" id="myLinkUrl" placeholder="https://...">
+        <button type="submit" class="btn btn-primary" style="padding:0 18px">添加</button>
+      </form>
+      <div id="myLinkList" class="mylink-list"></div>
+      <div class="link-empty" id="myLinkEmpty">暂无友链，添加后显示在这里，自动拉取网站 Logo。</div>
+    </section>
+    <!-- DeepSeek 聊天 -->
+    <section class="view" id="viewChat" hidden>
+      <div class="view-head">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#1a7f64,#2dd4bf);display:flex;align-items:center;justify-content:center;">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <h2>DeepSeek 助手</h2>
+        </div>
+      </div>
+      <div class="chat-wrap">
+        <div class="chat-box" id="chatBox"><div class="chat-msg bot">你好，我是 DeepSeek 助手（通过 Cloudflare 转发）。有什么可以帮你？</div></div>
+        <div class="chat-presets" id="chatPresets"></div>
+        <div class="chat-key-bar" id="chatKeyBar" hidden>
+          <span class="ks">本地密钥：</span>
+          <input type="password" id="dsApiKey" placeholder="sk-...（留空则用服务器 DEEPSEEK_API_KEY）">
+          <button id="dsKeySave">保存</button>
+        </div>
+        <form class="chat-input-wrap" id="chatForm">
+          <input id="chatInput" placeholder="输入消息..." autocomplete="off" autocapitalize="off">
+          <button type="submit" class="chat-send">发送</button>
+        </form>
       </div>
     </section>
   </main>
@@ -269,7 +348,7 @@ function apiDelete(id){ return fetch(API+'/'+encodeURIComponent(id),{method:'DEL
 /* ===== 视图切换 ===== */
 function show(v){
   state.view=v;
-  ['list','post','manage','editor'].forEach(function(k){
+  ['list','post','manage','editor','links','chat'].forEach(function(k){
     var el=$('view'+k.charAt(0).toUpperCase()+k.slice(1));
     if(el) el.hidden=(k!==v);
   });
@@ -399,6 +478,159 @@ $('edPreviewBtn').addEventListener('click',function(){
 });
 $('edDraft').addEventListener('click',function(){ saveArticle('draft'); });
 $('edPublish').addEventListener('click',function(){ saveArticle('published'); });
+
+/** ===== 友链（云端同步 /api/links） ===== */
+(function(){
+  var KEY='ffdaz_myLinksV1';
+  var links=[];
+  try{ links=JSON.parse(localStorage.getItem(KEY)||'[]'); }catch(e){ links=[]; }
+  if(!Array.isArray(links)) links=[];
+  var form=document.getElementById('myLinkForm');
+  var listEl=document.getElementById('myLinkList');
+  var emptyEl=document.getElementById('myLinkEmpty');
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(links)); }catch(e){} }
+  function linksPush(){
+    fetch('/api/links',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',
+      body:JSON.stringify({links:links.map(function(l){ return {id:l.id,title:l.title,url:l.url}; })})})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if(!d||!d.ok) toast('友链云端同步失败：'+(d&&d.error||'未知错误')); })
+      .catch(function(){ toast('友链云端同步失败：网络异常'); });
+  }
+  function linksPull(){
+    fetch('/api/links',{credentials:'same-origin'})
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d||!d.ok) return;
+        var cloud=Array.isArray(d.links)?d.links:[];
+        if(d.t>0){ links=cloud; save(); renderMyLinks(); }
+        else if(cloud.length){ links=cloud; save(); renderMyLinks(); }
+        else if(links.length){ linksPush(); }
+      }).catch(function(){});
+  }
+  window.linksPush=linksPush; window.linksPull=linksPull;
+  function logoInfo(url){
+    try{ var u=new URL(url); var d=u.hostname.replace(/^www\./,'');
+      return { primary:'https://'+d+'/favicon.ico', fallback:'https://icons.duckduckgo.com/ip3/'+d+'.ico', initial:(d.charAt(0)||'?').toUpperCase() };
+    }catch(e){ return null; }
+  }
+  function renderMyLinks(){
+    if(!listEl) return;
+    if(!links.length){ listEl.innerHTML=''; if(emptyEl) emptyEl.style.display='block'; return; }
+    if(emptyEl) emptyEl.style.display='none';
+    listEl.innerHTML=links.map(function(l){
+      var info=logoInfo(l.url);
+      var img=info
+        ? '<span class="mylink-logo-wrap"><img class="mylink-logo" src="'+info.primary+'" alt="" loading="lazy" onerror="this.style.display=\'none\';var p=this.nextElementSibling;if(p)p.style.display=\'flex\';"><span class="mylink-logo-fb" style="display:none">'+info.initial+'</span></span>'
+        : '<span class="mylink-logo-wrap"><span class="mylink-logo-fb">?</span></span>';
+      return '<a class="mylink-item" href="'+esc(l.url)+'" target="_blank" rel="noopener nofollow">'+img+
+        '<span class="mylink-mid"><span class="mylink-title"></span><span class="mylink-url"></span></span>'+
+        '<button type="button" class="mylink-del" data-id="'+esc(l.id)+'" title="删除">×</button></a>';
+    }).join('');
+    listEl.querySelectorAll('.mylink-item').forEach(function(a,i){
+      var t=a.querySelector('.mylink-title'); if(t) t.textContent=links[i].title;
+      var u=a.querySelector('.mylink-url'); if(u) u.textContent=links[i].url.replace(/^https?:\/\//,'');
+    });
+    listEl.querySelectorAll('.mylink-del').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var id=btn.getAttribute('data-id');
+        links=links.filter(function(x){ return String(x.id)!==String(id); });
+        save(); renderMyLinks(); toast('已删除友链'); try{ linksPush(); }catch(e){}
+      });
+    });
+  }
+  window.renderMyLinks=renderMyLinks;
+  if(form) form.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var ti=document.getElementById('myLinkTitle'), ui=document.getElementById('myLinkUrl');
+    var title=String(ti?ti.value:'').trim(), url=String(ui?ui.value:'').trim();
+    if(!title){ toast('请输入网站名称'); return; }
+    if(!url){ toast('请输入网站链接'); return; }
+    var u; try{ u=new URL(url); }catch(e){ toast('链接格式不正确（需以 https:// 开头）'); return; }
+    if(u.protocol!=='http:'&&u.protocol!=='https:'){ toast('链接需以 http(s):// 开头'); return; }
+    links.unshift({ id:String(Date.now())+Math.random().toString(36).slice(2,6), title:title, url:u.href });
+    save(); renderMyLinks();
+    if(ti) ti.value=''; if(ui) ui.value='';
+    toast('已添加友链：'+title); try{ linksPush(); }catch(e){}
+  });
+  renderMyLinks();
+  try{ linksPull(); }catch(e){}
+})();
+
+/** ===== DeepSeek 助手（/api/deepseek，服务端 env 密钥优先） ===== */
+(function(){
+  var box=document.getElementById('chatBox');
+  var form=document.getElementById('chatForm');
+  var input=document.getElementById('chatInput');
+  var presetsEl=document.getElementById('chatPresets');
+  var keyBar=document.getElementById('chatKeyBar');
+  var keyInp=document.getElementById('dsApiKey');
+  var keySave=document.getElementById('dsKeySave');
+  var localKey='';
+  try{ localKey=localStorage.getItem('ffdaz_dsKey')||''; }catch(e){}
+  var envKey=false;
+  fetch('/api/deepseek?action=key-status',{credentials:'same-origin'})
+    .then(function(r){ return r.json().catch(function(){ return {}; }); })
+    .then(function(d){ envKey=!!(d&&d.configured); syncBar(); })
+    .catch(function(){ envKey=false; syncBar(); });
+  function syncBar(){
+    if(!keyBar) return;
+    keyBar.hidden=!!envKey;
+    if(keyInp) keyInp.value=localKey||'';
+  }
+  if(keySave) keySave.addEventListener('click',function(){
+    localKey=String(keyInp?keyInp.value:'').trim();
+    try{ localStorage.setItem('ffdaz_dsKey',localKey); }catch(e){}
+    toast(localKey?'本地密钥已保存（覆盖服务器密钥）':'已清空本地密钥（将使用服务器密钥）');
+    syncBar();
+  });
+  var PRESETS=['帮我写一份催平台结款的礼貌话术','分析我的收益数据该注意什么','光遇追光计划活动规则有哪些要点'];
+  if(presetsEl){
+    presetsEl.innerHTML=PRESETS.map(function(p){ return '<button type="button" class="chat-preset">'+esc(p)+'</button>'; }).join('');
+    presetsEl.querySelectorAll('.chat-preset').forEach(function(b){
+      b.addEventListener('click',function(){ if(input){ input.value=b.textContent; input.focus(); } });
+    });
+  }
+  function appendMsg(role,html){
+    if(!box) return;
+    var d=document.createElement('div');
+    d.className='chat-msg '+(role==='user'?'user':'bot');
+    if(typeof html==='string'&&html.indexOf('<')<0) d.textContent=html; else d.innerHTML=html;
+    box.appendChild(d); box.scrollTop=box.scrollHeight;
+    return d;
+  }
+  function mdChat(s){
+    var t=String(s||'');
+    t=t.replace(/```([\s\S]*?)```/g,function(m,c){ return '<pre><code>'+esc(c.trim())+'</code></pre>'; });
+    t=t.replace(/`([^`\n]+)`/g,function(m,c){ return '<code>'+esc(c)+'</code>'; });
+    t=t.replace(/^### (.*)$/gm,'<b>$1</b>');
+    t=t.replace(/^## (.*)$/gm,'<b>$1</b>');
+    t=t.replace(/^# (.*)$/gm,'<b>$1</b>');
+    t=t.replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>');
+    return t.replace(/\n/g,'<br>');
+  }
+  if(form) form.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var msg=String(input?input.value:'').trim();
+    if(!msg) return;
+    appendMsg('user',esc(msg).replace(/\n/g,'<br>'));
+    if(input) input.value='';
+    var loading=appendMsg('bot','思考中…'); loading.classList.add('loading');
+    fetch('/api/deepseek',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',
+      body:JSON.stringify({messages:[{role:'user',content:msg}],apiKey:localKey||undefined,stream:false})})
+      .then(function(r){ return r.json().catch(function(){ return {}; }); })
+      .then(function(d){
+        if(loading) loading.remove();
+        var content=d&&d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content;
+        if(content){ appendMsg('bot',mdChat(content)); }
+        else appendMsg('bot','出错了：'+(d&&d.error||'接口无返回，请检查密钥配置'));
+        if(d&&d.error&&String(d.error).indexOf('密钥')>=0) syncBar();
+      })
+      .catch(function(e){
+        if(loading) loading.remove();
+        appendMsg('bot','网络异常：'+(e&&e.message||e));
+      });
+  });
+})();
 
 /* 启动 */
 show('list');
