@@ -282,7 +282,7 @@ textarea#edContent:focus{border-color:var(--brand)}
           <select id="dsModelSelect">
             <option value="auto">自动模式（智能选择）</option>
             <option value="deepseek-chat">官方 DeepSeek（deepseek-chat）</option>
-            <option value="deepseek/deepseek-flash">腾讯云 DeepSeek-V4.1-Flash（视觉）</option>
+            <option value="deepseek-v4-flash">腾讯云 DeepSeek-V4.1-Flash（视觉）</option>
           </select>
           <span id="dsModelHint" style="font-size:11.5px;color:var(--muted)"></span>
         </div>
@@ -604,15 +604,27 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
   try{ localKey=localStorage.getItem('ffdaz_dsKey')||''; }catch(e){}
   var savedModel='';
   try{ savedModel=localStorage.getItem('ffdaz_dsModel')||''; }catch(e){}
+  if(savedModel==='deepseek/deepseek-flash') savedModel='deepseek-v4-flash'; // 兼容旧版本存储
   var envStatus={deepseek:false,tencent:false};
   var pendingImages=[]; // dataURL 列表
 
   // 视觉模型白名单（支持图片理解）
-  var VISION_MODELS={'deepseek/deepseek-flash':1,'deepseek/deepseek-v4-flash-vision-exp':1};
+  var VISION_MODELS={'deepseek/deepseek-flash':1,'deepseek/deepseek-v4-flash-vision-exp':1,'deepseek-v4-flash':1,'deepseek-v4-flash-vision-exp':1};
 
   function curModel(){ return modelSel?modelSel.value:''; }
-  function providerOf(){ var m=curModel()||''; if(!m||m==='auto') return 'auto'; return m.indexOf('/')>=0?'tencent':'deepseek'; }
-  function isVision(){ var m=curModel()||''; if(!m||m==='auto') return true; return VISION_MODELS[m]===1 || m.indexOf('vision')>=0; }
+  // 供应商判定：auto → 自动；官方模型只有 deepseek-chat；其余（含 deepseek-v4-flash 等腾讯模型）→ tencent
+  function providerOf(){ var m=curModel()||''; if(!m||m==='auto') return 'auto'; return m==='deepseek-chat'?'deepseek':'tencent'; }
+  // 视觉判断：白名单 / id 含 vision / GLM-Flash 系列 / 名称含"视觉"（腾讯控制台标注支持视觉理解）
+  function isVisionId(id,name){
+    var s=String(id||'').toLowerCase();
+    var n=String(name||'');
+    if(VISION_MODELS[s]===1) return true;
+    if(s.indexOf('vision')>=0) return true;
+    if(/^glm-/.test(s)&&/flash|vl/i.test(s)) return true;
+    if(n.indexOf('视觉')>=0) return true;
+    return false;
+  }
+  function isVision(){ var m=curModel()||''; if(!m||m==='auto') return true; return isVisionId(m,''); }
 
   function syncUI(){
     var p=providerOf();
@@ -670,9 +682,9 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
         d.data.forEach(function(md){
           var id=md&&md.id;
           if(!id||seen[id]) return;
-          if(String(id).indexOf('deepseek')<0) return; // 只列 DeepSeek 系列
+          // 不限定 deepseek：TokenHub 上已开通的 GLM / 混元 / DeepSeek 等模型全部可选
           seen[id]=1;
-          var isV=(VISION_MODELS[id]===1||String(id).indexOf('vision')>=0);
+          var isV=isVisionId(id, md.name);
           var opt=document.createElement('option');
           opt.value=id;
           opt.textContent=(md.name||id)+(isV?'（视觉）':'');
@@ -795,7 +807,11 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
         if(loading) loading.remove();
         var content2=d&&d.choices&&d.choices[0]&&d.choices[0].message&&d.choices[0].message.content;
         if(content2){ appendMsg('bot',mdChat(content2)); }
-        else appendMsg('bot','出错了：'+(d&&d.error||'接口无返回，请检查密钥配置'));
+        else {
+          var errMsg=d&&d.error||'接口无返回，请检查密钥配置';
+          if(errMsg && typeof errMsg==='object') errMsg=errMsg.message||errMsg.error||JSON.stringify(errMsg);
+          appendMsg('bot','出错了：'+String(errMsg).slice(0,300));
+        }
         if(d&&d.error&&String(d.error).indexOf('密钥')>=0) syncUI();
       })
       .catch(function(e){
