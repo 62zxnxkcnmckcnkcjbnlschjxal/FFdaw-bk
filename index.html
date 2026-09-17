@@ -176,7 +176,7 @@ textarea#edContent:focus{border-color:var(--brand)}
 <body>
 <nav class="nav">
   <a class="brand" href="#">
-    <span class="logo">F</span><span class="brand-name">FF大王 博客</span>
+    <span class="logo" id="brandLogo"><img id="brandLogoImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:12px"><span id="brandLogoText">F</span></span><span class="brand-name" id="brandName">FF大王 博客</span>
   </a>
   <div class="spacer"></div>
   <a class="nav-link on" data-view="list">主页</a>
@@ -184,21 +184,11 @@ textarea#edContent:focus{border-color:var(--brand)}
   <a class="nav-link" data-action="manage">管理</a>
   <a class="nav-link" data-view="links">友链</a>
   <a class="nav-link" data-view="chat">DeepSeek</a>
+  <a class="nav-link" data-view="settings">设置</a>
   <button class="theme-btn" id="themeBtn" title="切换主题">☀️</button>
 </nav>
 
 <div class="container">
-  <aside class="left">
-    <div class="card">
-      <div class="avatar">FF</div>
-      <h3>FF大王</h3>
-      <p class="bio">光遇资深玩家 · 创作者<br>记录游戏与生活</p>
-      <div class="stats">
-        <div><b id="statPosts">0</b><span>文章</span></div>
-        <div><b id="statCats">1</b><span>分类</span></div>
-      </div>
-    </div>
-  </aside>
 
   <main class="right">
     <!-- 列表 -->
@@ -276,10 +266,37 @@ textarea#edContent:focus{border-color:var(--brand)}
         </form>
       </div>
     </section>
+    <!-- 设置 -->
+    <section class="view" id="viewSettings" hidden>
+      <div class="view-head"><h2>设置</h2><div class="spacer"></div><span style="font-size:12px;color:var(--muted)">云端同步 · 换设备自动生效</span></div>
+      <div style="padding:20px;display:flex;flex-direction:column;gap:18px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label style="font-size:13px;font-weight:600">网站标题</label>
+          <input type="text" id="siteTitle" placeholder="FF大王 博客" style="height:40px;padding:0 12px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:var(--bg);color:var(--text);outline:none">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label style="font-size:13px;font-weight:600">网站 Logo（图片）</label>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div id="siteLogoPreview" style="width:44px;height:44px;border-radius:12px;border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);font-size:18px;font-weight:800;color:var(--brand)">F</div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex:1;min-width:0">
+              <input type="text" id="siteLogoUrl" placeholder="图片链接（https://...）" style="height:36px;padding:0 10px;border:1px solid var(--border);border-radius:9px;font-size:13px;background:var(--bg);color:var(--text);outline:none">
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <label style="padding:7px 14px;border-radius:9px;font-size:12.5px;font-weight:600;cursor:pointer;background:var(--brand-soft);color:var(--brand)">上传图片<input type="file" id="siteLogoFile" accept="image/*" style="display:none"></label>
+                <button type="button" id="siteLogoClear" style="padding:7px 14px;border:1px solid var(--border);border-radius:9px;font-size:12.5px;background:var(--bg);color:var(--muted);cursor:pointer">清除 Logo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:4px">
+          <button class="btn btn-primary" id="siteSaveBtn" style="padding:0 22px;height:38px">保存设置</button>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.7">设置保存在浏览器本地，并同步到云端（Cloudflare KV），换设备打开会自动读取。上传的 Logo 会以图片形式存到云端。</div>
+      </div>
+    </section>
   </main>
 </div>
 
-<div class="foot">FF大王 博客 · 非官方个人自用 · 数据云端同步</div>
+<div class="foot" id="footLine">FF大王 博客 · 非官方个人自用 · 数据云端同步</div>
 <div id="toast"></div>
 
 <script>
@@ -348,7 +365,7 @@ function apiDelete(id){ return fetch(API+'/'+encodeURIComponent(id),{method:'DEL
 /* ===== 视图切换 ===== */
 function show(v){
   state.view=v;
-  ['list','post','manage','editor','links','chat'].forEach(function(k){
+  ['list','post','manage','editor','links','chat','settings'].forEach(function(k){
     var el=$('view'+k.charAt(0).toUpperCase()+k.slice(1));
     if(el) el.hidden=(k!==v);
   });
@@ -630,6 +647,93 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
         appendMsg('bot','网络异常：'+(e&&e.message||e));
       });
   });
+})();
+
+/** ===== 站点设置（标题/Logo，localStorage + 云端 KV /api/settings） ===== */
+(function(){
+  var SITE_LS='ffdaz_site_config';
+  var cfg={title:'',logo:''};
+  try{ var c=JSON.parse(localStorage.getItem(SITE_LS)||'{}'); if(c&&typeof c==='object'){ cfg.title=c.title||''; cfg.logo=c.logo||''; } }catch(e){}
+  var titleInp=document.getElementById('siteTitle');
+  var logoUrlInp=document.getElementById('siteLogoUrl');
+  var logoFile=document.getElementById('siteLogoFile');
+  var logoClear=document.getElementById('siteLogoClear');
+  var saveBtn=document.getElementById('siteSaveBtn');
+  var preview=document.getElementById('siteLogoPreview');
+  var brandName=document.getElementById('brandName');
+  var logoImg=document.getElementById('brandLogoImg');
+  var logoText=document.getElementById('brandLogoText');
+  var footLine=document.getElementById('footLine');
+
+  function apply(){
+    var t=cfg.title||'FF大王 博客';
+    if(brandName) brandName.textContent=t;
+    if(footLine) footLine.textContent=t+' · 非官方个人自用 · 数据云端同步';
+    try{ document.title=t; }catch(e){}
+    if(logoImg && logoText){
+      if(cfg.logo){ logoImg.src=cfg.logo; logoImg.style.display='block'; logoText.style.display='none'; }
+      else { logoImg.style.display='none'; logoImg.removeAttribute('src'); logoText.style.display='flex'; }
+    }
+    if(titleInp) titleInp.value=cfg.title||'';
+    if(logoUrlInp) logoUrlInp.value=(cfg.logo&&cfg.logo.indexOf('data:')!==0)?cfg.logo:'';
+    if(preview){
+      if(cfg.logo){ preview.innerHTML='<img src="'+cfg.logo+'" style="width:100%;height:100%;object-fit:cover" alt="">'; }
+      else { preview.textContent='F'; }
+    }
+  }
+  window.__siteApply=apply;
+
+  function saveLocal(){ try{ localStorage.setItem(SITE_LS,JSON.stringify(cfg)); }catch(e){} }
+  function sitePush(){
+    fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',
+      body:JSON.stringify({title:cfg.title,logo:cfg.logo})})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ if(d&&d.ok) toast('已保存到云端'); else if(d&&d.error) toast('云端同步失败：'+d.error); })
+      .catch(function(){ toast('云端同步失败：网络异常'); });
+  }
+  function saveAll(){
+    cfg.title=String(titleInp?titleInp.value:'').trim();
+    cfg.logo=String(logoUrlInp?logoUrlInp.value:'').trim();
+    saveLocal(); apply();
+    toast('设置已保存');
+    try{ sitePush(); }catch(e){}
+  }
+  if(saveBtn) saveBtn.addEventListener('click',saveAll);
+
+  if(logoUrlInp) logoUrlInp.addEventListener('change',function(){
+    var v=logoUrlInp.value.trim();
+    if(!v) return;
+    var u; try{ u=new URL(v); }catch(e){ toast('链接格式不正确'); return; }
+    if(u.protocol!=='http:'&&u.protocol!=='https:'){ toast('需以 http(s):// 开头'); return; }
+    cfg.logo=v; saveLocal(); apply();
+  });
+  if(logoFile) logoFile.addEventListener('change',function(){
+    var f=logoFile.files&&logoFile.files[0]; if(!f) return;
+    if(f.size>800*1024){ toast('图片需小于 800KB（KV 限制）'); return; }
+    var rd=new FileReader();
+    rd.onload=function(){ cfg.logo=String(rd.result); saveLocal(); apply(); toast('Logo 已读取，点「保存设置」同步到云端'); };
+    rd.onerror=function(){ toast('读取图片失败'); };
+    rd.readAsDataURL(f);
+  });
+  if(logoClear) logoClear.addEventListener('click',function(){
+    cfg.logo=''; saveLocal(); apply(); toast('已清除 Logo（点保存同步）');
+  });
+
+  // 从云端拉取（首次/换设备）
+  fetch('/api/settings',{credentials:'same-origin'})
+    .then(function(r){ return r.json().catch(function(){ return {}; }); })
+    .then(function(d){
+      if(d&&d.ok){
+        var c=d.config||{};
+        var merged=false;
+        if(c.title){ cfg.title=c.title; merged=true; }
+        if(c.logo){ cfg.logo=c.logo; merged=true; }
+        if(merged){ saveLocal(); apply(); }
+        else if(cfg.title||cfg.logo){ saveLocal(); apply(); try{ sitePush(); }catch(e){} }
+      }
+    })
+    .catch(function(){});
+  apply();
 })();
 
 /* 启动 */
