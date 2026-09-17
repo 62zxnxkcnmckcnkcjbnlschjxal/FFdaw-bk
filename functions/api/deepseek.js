@@ -91,7 +91,8 @@ export async function onRequestPost(ctx) {
       return json({ error: '缺少 apiKey（服务器未配置 ' + p.envKey + '，且请求未提供）' }, 400);
     }
 
-    const res = await fetch(p.base + '/chat/completions', {
+    // 注意：TokenHub 完整路径带 /v1（GET /v1/models 正常是因为用了 /v1），POST 必须 /v1/chat/completions
+    const res = await fetch(p.base + '/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
