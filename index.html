@@ -151,12 +151,31 @@ a{color:inherit}
 .mus-time{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:5px}
 .mus-play{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--paper);border:0;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 :root.dark .mus-play{background:var(--lime);color:var(--lime-ink)}
-/* 每日切片卡 */
-.sl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
-.sl-item{aspect-ratio:1/.75;border-radius:12px;overflow:hidden;position:relative;background:var(--paper);cursor:pointer}
-.sl-item img{width:100%;height:100%;object-fit:cover;display:block}
-.sl-item .sl-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px}
-.sl-caption{font-size:13.5px;color:var(--muted);margin-top:12px;line-height:1.5}
+/* 每日切片卡（大图轮播版） */
+.sl-hero{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:16/11;background:var(--paper);margin-top:6px}
+.sl-hero>img{width:100%;height:100%;object-fit:cover;display:block}
+.sl-hero .sl-tag{position:absolute;top:14px;left:14px;background:rgba(0,0,0,.72);color:#fff;font-size:11.5px;letter-spacing:.15em;padding:6px 12px;border-radius:6px;font-weight:600;z-index:2}
+.sl-hero .sl-meta{position:absolute;left:18px;bottom:18px;right:70px;z-index:2;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.45)}
+.sl-hero .sl-title{font-size:22px;font-weight:800;line-height:1.2;margin-bottom:4px}
+.sl-hero .sl-sub{font-size:10.5px;letter-spacing:.25em;opacity:.85}
+.sl-hero .sl-arrow{position:absolute;right:14px;bottom:14px;width:44px;height:44px;border-radius:50%;background:#fff;color:#1a1a1a;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:transform .15s;text-decoration:none}
+.sl-hero .sl-arrow:hover{transform:scale(1.06)}
+.sl-hero .sl-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12.5px;text-align:center;padding:20px}
+.sl-dots{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.sl-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .2s;display:inline-block}
+.sl-dots i.on{background:var(--ink);width:18px;border-radius:3px}
+/* 时间天气卡 */
+.tw-card{background:#20301f;color:#f3f4e8;border-radius:18px;padding:22px 22px 18px;box-shadow:0 10px 30px rgba(0,0,0,.15);margin-top:14px}
+body.dark .tw-card{background:#1a2718}
+.tw-top{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.2em;opacity:.85}
+.tw-weather{display:flex;align-items:center;gap:7px;font-size:13px;letter-spacing:.05em}
+.tw-weather svg{width:18px;height:18px;color:var(--lime)}
+.tw-time{font-size:60px;font-weight:800;line-height:1.05;letter-spacing:-.02em;margin:14px 0 6px;font-variant-numeric:tabular-nums}
+.tw-time .dot{color:var(--lime);display:inline-block;width:14px;text-align:center;font-size:46px;vertical-align:4px}
+.tw-date{font-size:14px;opacity:.85;margin-bottom:6px}
+.tw-line{height:1px;background:rgba(255,255,255,.15);margin:14px 0}
+.tw-tz{display:flex;align-items:center;gap:8px;font-size:12.5px;opacity:.85}
+.tw-tz i{width:8px;height:8px;border-radius:50%;background:var(--lime);display:inline-block}
 /* ===== 通用视图 ===== */
 .view{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
 .view[hidden]{display:none}
@@ -432,11 +451,25 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
         </div>
         <audio id="musAudio" preload="none"></audio>
       </div>
-      <!-- 每日切片 -->
+      <!-- 每日切片（大图轮播） -->
       <div class="b-card" id="slCard">
         <div class="b-label"><span class="ln"><i></i><b>每日切片</b></span><span class="more-btn" data-action="manage" style="font-size:12px">管理 ›</span></div>
-        <div class="sl-grid" id="slGrid"><div class="sl-item"><div class="sl-ph">在「管理 → 首页配置」添加切片图片</div></div></div>
-        <div class="sl-caption" id="slCaption">一些值得留下的灵感。</div>
+        <div class="sl-hero" id="slHero"><div class="sl-empty">在「管理 → 首页配置」上传切片图片</div></div>
+        <div class="sl-dots" id="slDots"></div>
+      </div>
+      <!-- 时间天气卡 -->
+      <div class="tw-card">
+        <div class="tw-top">
+          <span>LOCAL TIME / ZHENGZHOU</span>
+          <span class="tw-weather">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+            <span id="twText">—</span>
+          </span>
+        </div>
+        <div class="tw-time" id="twTime">--:--<span class="dot">:</span>--</div>
+        <div class="tw-date" id="twDate">—</div>
+        <div class="tw-line"></div>
+        <div class="tw-tz"><i></i><span>CST · UTC+8</span></div>
       </div>
     </div>
 
@@ -1271,21 +1304,76 @@ function loadHomeExtra(){
   };
 })();
 
-/* ===== 每日切片 ===== */
+/* ===== 每日切片（大图轮播） ===== */
+var SL_IDX=0;
 window.momoRenderSlices=function(list){
-  var grid=document.getElementById('slGrid');
-  if(!grid) return;
-  if(!list||!list.length){
-    grid.innerHTML='<div class="sl-item"><div class="sl-ph">在「管理 → 首页配置」上传切片图片</div></div>';
-    return;
+  var hero=document.getElementById('slHero');
+  var dots=document.getElementById('slDots');
+  if(!hero) return;
+  list=(list||[]).filter(function(s){ return s && s.image; });
+  if(!list.length){
+    hero.innerHTML='<div class="sl-empty">在「管理 → 首页配置」上传切片图片</div>';
+    if(dots) dots.innerHTML='';
+    SL_IDX=0; return;
   }
-  grid.innerHTML=list.map(function(s){
-    if(s.image){
-      return '<div class="sl-item" title="'+esc(s.title||'')+'"><img src="'+esc(s.image)+'" alt="'+esc(s.title||'')+'" loading="lazy"></div>';
-    }
-    return '<div class="sl-item"><div class="sl-ph">'+esc(s.title||'切片')+'</div></div>';
-  }).join('');
+  if(SL_IDX>=list.length) SL_IDX=0;
+  var s=list[SL_IDX];
+  hero.innerHTML=
+    '<span class="sl-tag">日常切片</span>'+
+    '<img src="'+esc(s.image)+'" alt="'+esc(s.title||'')+'" loading="lazy">'+
+    '<div class="sl-meta">'+
+      '<div class="sl-title">'+esc(s.title||'未命名')+'</div>'+
+      '<div class="sl-sub">A LITTLE MOMENT</div>'+
+    '</div>'+
+    (list.length>1
+      ? '<a class="sl-arrow" id="slArrow" title="下一张"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>'
+      : '');
+  if(dots){
+    dots.innerHTML=list.map(function(_,i){
+      return '<i class="'+(i===SL_IDX?'on':'')+'" data-i="'+i+'"></i>';
+    }).join('');
+    dots.querySelectorAll('i').forEach(function(d){
+      d.addEventListener('click',function(){ SL_IDX=+d.getAttribute('data-i'); window.momoRenderSlices(list); });
+    });
+  }
+  var ar=document.getElementById('slArrow');
+  if(ar) ar.addEventListener('click',function(e){ e.preventDefault(); SL_IDX=(SL_IDX+1)%list.length; window.momoRenderSlices(list); });
 };
+
+/* ===== 时间天气卡 ===== */
+(function(){
+  function pad(n){ return n<10?'0'+n:''+n; }
+  function tick(){
+    var d=new Date();
+    var h=d.getHours(), m=d.getMinutes(), s=d.getSeconds();
+    var t=document.getElementById('twTime');
+    if(t) t.innerHTML=pad(h)+'<span class="dot">:</span>'+pad(m);
+    var dt=document.getElementById('twDate');
+    if(dt){
+      var wk=['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
+      dt.textContent=d.getFullYear()+'.'+pad(d.getMonth()+1)+'.'+pad(d.getDate())+' · '+wk;
+    }
+  }
+  tick(); setInterval(tick, 1000);
+  // 郑州坐标
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=34.75&longitude=113.62&current=temperature_2m,weather_code&timezone=Asia/Shanghai')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d||!d.current) return;
+      var c=Math.round(d.current.temperature_2m);
+      var code=d.current.weather_code;
+      var txt='晴';
+      if(code===0) txt='晴';
+      else if(code<=2) txt='多云';
+      else if(code===3) txt='阴';
+      else if(code===45||code===48) txt='雾';
+      else if(code>=51&&code<=67) txt='雨';
+      else if(code>=71&&code<=77) txt='雪';
+      else if(code>=80) txt='阵雨';
+      var el=document.getElementById('twText');
+      if(el) el.textContent=c+'° '+txt;
+    }).catch(function(){});
+})();
 
 /* ===== 首页配置（/api/home） ===== */
 var HOME_CFG={track:{},slices:[],site:{}};
