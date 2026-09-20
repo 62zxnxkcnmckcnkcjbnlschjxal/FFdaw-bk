@@ -489,7 +489,7 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
       <div class="slice-row" style="margin:8px 0 14px">
         <div style="flex:1">
           <div style="font-size:13.5px;font-weight:600;margin-bottom:3px" id="cfgTrackAudioName">未选择音频</div>
-          <div style="font-size:11.5px;color:var(--muted)">建议 mp3 < 3MB（自动存云端）</div>
+          <div style="font-size:11.5px;color:var(--muted)">支持上传 mp3/AAC/M4A（≤18MB）；FLAC 无损太大装不下 KV，建议转成 320kbps mp3</div>
         </div>
         <button type="button" class="btn btn-ghost" id="cfgTrackAudioBtn" style="padding:6px 14px;font-size:12.5px">选择音频</button>
       </div>
@@ -1432,7 +1432,7 @@ document.addEventListener('DOMContentLoaded',function(){
   if(audFile) audFile.addEventListener('change',function(){
     var f=audFile.files&&audFile.files[0]; audFile.value='';
     if(!f) return;
-    if(f.size>6*1024*1024){ toast('音频太大（>6MB），请换短一点的 mp3'); return; }
+    if(f.size>18*1024*1024){ toast('音频太大（>18MB，base64 后会超过 KV 上限），建议转成 320kbps mp3（约 8-12MB）'); return; }
     audBtn.disabled=true; audBtn.textContent='读取中…';
     var fr=new FileReader();
     fr.onload=function(){
@@ -1456,7 +1456,7 @@ document.addEventListener('DOMContentLoaded',function(){
     // cover/url 已在 HOME_CFG.track 内存里（上传时直接赋值）
     // slices 已在内存中（renderCfgSlices 时实时同步 title）
     var totalBytes=JSON.stringify(HOME_CFG).length;
-    if(totalBytes>22*1024*1024){ toast('总配置超过 22MB（KV 上限 25MB），请删除一些切片或换更小的音频'); return; }
+    if(totalBytes>24*1024*1024){ toast('总配置超过 24MB（KV 上限 25MB），请删除一些切片或换更小的音频'); return; }
     save.disabled=true; save.textContent='上传中…';
     fetch('/api/home',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(HOME_CFG)})
       .then(function(r){ return r.json(); })
