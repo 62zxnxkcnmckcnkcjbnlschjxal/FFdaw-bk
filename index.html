@@ -301,6 +301,11 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
 .slice-row .st:focus{border-color:var(--ink)}
 .slice-row .del{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:var(--paper);color:var(--muted);cursor:pointer;flex-shrink:0;font-size:15px}
 .slice-row .del:hover{color:var(--danger);border-color:var(--danger)}
+/* 未保存提醒 */
+.unsaved-bar{display:none;background:#fff3cd;border:1px solid #ffc107;color:#856404;padding:8px 12px;border-radius:8px;font-size:12.5px;margin-bottom:10px}
+.unsaved-bar.show{display:block;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+#cfgSave.dirty{background:var(--lime);color:var(--lime-ink);border-color:var(--lime-ink)}
 /* 响应式 */
 @media (max-width:980px){
   .bento,.bento-2{grid-template-columns:1fr}
@@ -494,6 +499,7 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
       <div id="cfgSlices"></div>
       <button class="btn btn-ghost" id="cfgAddSlice" style="margin:8px 0 14px">＋ 上传切片图片</button>
       <input type="file" id="cfgSliceFile" accept="image/*" multiple hidden>
+      <div class="unsaved-bar" id="unsavedBar">⚠ 有未保存的修改，记得点下面的「保存首页配置」才会上传到云端</div>
       <div><button class="btn btn-primary" id="cfgSave">保存首页配置</button></div>
     </div>
     <div id="manageWrap"><div class="empty">加载中…</div></div>
@@ -1333,14 +1339,23 @@ function renderCfgSlices(){
     var i=+row.getAttribute('data-si');
     row.querySelector('[data-title]').addEventListener('input',function(){
       HOME_CFG.slices[i].title=this.value;
+      markDirty();
     });
   });
   box.querySelectorAll('[data-del-slice]').forEach(function(b){
     b.addEventListener('click',function(){
       var i=+b.getAttribute('data-del-slice');
-      HOME_CFG.slices.splice(i,1); renderCfgSlices();
+      HOME_CFG.slices.splice(i,1); renderCfgSlices(); markDirty();
     });
   });
+}
+function markDirty(){
+  var b=document.getElementById('unsavedBar'); if(b) b.classList.add('show');
+  var s=document.getElementById('cfgSave'); if(s) s.classList.add('dirty');
+}
+function clearDirty(){
+  var b=document.getElementById('unsavedBar'); if(b) b.classList.remove('show');
+  var s=document.getElementById('cfgSave'); if(s) s.classList.remove('dirty');
 }
 /* 压缩图片成 dataURL（最长边 1200，JPEG 0.82） */
 function compressImage(file){
@@ -1384,7 +1399,8 @@ document.addEventListener('DOMContentLoaded',function(){
           HOME_CFG.slices.push({title:'',image:u});
         });
         renderCfgSlices();
-        toast('已加入 '+us.length+' 张，点「保存首页配置」上传到云端');
+        markDirty();
+        toast('已加入 '+us.length+' 张，记得点「保存首页配置」上传到云端');
       })
       .catch(function(e){ toast(e&&e.message||'图片处理失败'); })
       .finally(function(){ addBtn.disabled=false; addBtn.textContent='＋ 上传切片图片'; });
@@ -1396,7 +1412,7 @@ document.addEventListener('DOMContentLoaded',function(){
   if(covBtn&&covFile) covBtn.addEventListener('click',function(){ covFile.click(); });
   if(covClear) covClear.addEventListener('click',function(){
     HOME_CFG.track.cover='';
-    fillCfgForm();
+    fillCfgForm(); markDirty();
   });
   if(covFile) covFile.addEventListener('change',function(){
     var f=covFile.files&&covFile.files[0]; covFile.value='';
@@ -1404,7 +1420,7 @@ document.addEventListener('DOMContentLoaded',function(){
     covBtn.disabled=true; covBtn.textContent='压缩中…';
     compressImage(f).then(function(u){
       HOME_CFG.track.cover=u;
-      fillCfgForm();
+      fillCfgForm(); markDirty();
       toast('封面已就绪，点保存上传');
     }).catch(function(e){ toast(e&&e.message||'封面处理失败'); })
       .finally(function(){ covBtn.disabled=false; covBtn.textContent='选择封面'; });
@@ -1421,7 +1437,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var fr=new FileReader();
     fr.onload=function(){
       HOME_CFG.track.url=fr.result;
-      fillCfgForm();
+      fillCfgForm(); markDirty();
       toast('音频已就绪（'+(Math.round(f.size/1024/1024*100)/100)+'MB），点保存上传');
     };
     fr.onerror=function(){ toast('音频读取失败'); };
@@ -1445,7 +1461,7 @@ document.addEventListener('DOMContentLoaded',function(){
     fetch('/api/home',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(HOME_CFG)})
       .then(function(r){ return r.json(); })
       .then(function(d){
-        if(d.ok){ toast('首页配置已保存'); applyHomeCfg(); }
+        if(d.ok){ toast('首页配置已保存，已切回首页'); applyHomeCfg(); clearDirty(); show('list'); }
         else toast(d.error||'保存失败（需要先解锁访问验证）');
       }).catch(function(){ toast('网络异常'); })
       .finally(function(){ save.disabled=false; save.textContent='保存首页配置'; });
