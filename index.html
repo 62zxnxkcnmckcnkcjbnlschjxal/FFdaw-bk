@@ -1503,8 +1503,8 @@ document.querySelectorAll('.hero-cta,.more-btn,.back-btn').forEach(function(el){
   });
 });
 
-/* 启动：先拉首页配置，再渲染列表 */
-loadHomeCfg(false);
+/* 启动：先拉首页配置并自动渲染（之前是 false，导致刷新后不显示已保存的音乐和切片） */
+loadHomeCfg(true);
 
 </script>
 </body>
