@@ -56,8 +56,8 @@ export async function onRequest(ctx) {
       const cur = await read(ctx.env);
       if (body && typeof body === 'object') {
         if (body.track && typeof body.track === 'object') Object.assign(cur.track, body.track);
-        if (Array.isArray(body.slices)) cur.slices = body.slices.slice(0, 24).map(function (s) {
-          return { title: String(s.title || '').slice(0, 80), image: String(s.image || '').slice(0, 500) };
+        if (Array.isArray(body.slices)) cur.slices = body.slices.slice(0, 60).map(function (s) {
+          return { title: String(s.title || '').slice(0, 80), image: String(s.image || '').slice(0, 8 * 1024 * 1024) };
         });
         if (body.site && typeof body.site === 'object') Object.assign(cur.site, body.site);
       }
