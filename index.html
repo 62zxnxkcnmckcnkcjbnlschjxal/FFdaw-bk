@@ -494,7 +494,7 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
         <button type="button" class="btn btn-ghost" id="cfgTrackAudioBtn" style="padding:6px 14px;font-size:12.5px">选择音频</button>
       </div>
       <input type="file" id="cfgTrackCoverFile" accept="image/*" hidden>
-      <input type="file" id="cfgTrackAudioFile" accept="audio/*" hidden>
+      <input type="file" id="cfgTrackAudioFile" accept=".mp3,.m4a,.aac,.flac,.wav,.ogg,.opus,audio/mpeg,audio/mp4,audio/aac,audio/flac,audio/wav,audio/ogg" hidden>
       <h4 style="font-size:13px;margin:14px 0 8px;color:var(--muted)">每日切片（直接上传图片，自动压缩存云端，不限数量）</h4>
       <div id="cfgSlices"></div>
       <button class="btn btn-ghost" id="cfgAddSlice" style="margin:8px 0 14px">＋ 上传切片图片</button>
@@ -1433,14 +1433,20 @@ document.addEventListener('DOMContentLoaded',function(){
     var f=audFile.files&&audFile.files[0]; audFile.value='';
     if(!f) return;
     if(f.size>18*1024*1024){ toast('音频太大（>18MB，base64 后会超过 KV 上限），建议转成 320kbps mp3（约 8-12MB）'); return; }
-    audBtn.disabled=true; audBtn.textContent='读取中…';
+    audBtn.disabled=true; audBtn.textContent='读取中… 0%';
     var fr=new FileReader();
+    fr.onprogress=function(e){
+      if(e.lengthComputable){
+        var p=Math.round(e.loaded/e.total*100);
+        audBtn.textContent='读取中… '+p+'%';
+      }
+    };
     fr.onload=function(){
       HOME_CFG.track.url=fr.result;
       fillCfgForm(); markDirty();
       toast('音频已就绪（'+(Math.round(f.size/1024/1024*100)/100)+'MB），点保存上传');
     };
-    fr.onerror=function(){ toast('音频读取失败'); };
+    fr.onerror=function(){ toast('音频读取失败：'+(fr.error&&fr.error.message||'未知错误')); };
     fr.onloadend=function(){ audBtn.disabled=false; audBtn.textContent='选择音频'; };
     fr.readAsDataURL(f);
   });
@@ -1458,12 +1464,19 @@ document.addEventListener('DOMContentLoaded',function(){
     var totalBytes=JSON.stringify(HOME_CFG).length;
     if(totalBytes>24*1024*1024){ toast('总配置超过 24MB（KV 上限 25MB），请删除一些切片或换更小的音频'); return; }
     save.disabled=true; save.textContent='上传中…';
-    fetch('/api/home',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify(HOME_CFG)})
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        if(d.ok){ toast('首页配置已保存，已切回首页'); applyHomeCfg(); clearDirty(); show('list'); }
-        else toast(d.error||'保存失败（需要先解锁访问验证）');
-      }).catch(function(){ toast('网络异常'); })
+    var bodyStr=JSON.stringify(HOME_CFG);
+    console.log('POST /api/home, body size:', Math.round(bodyStr.length/1024/1024*100)/100, 'MB');
+    fetch('/api/home',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:bodyStr})
+      .then(function(r){
+        return r.text().then(function(t){
+          var d; try{ d=JSON.parse(t); }catch(e){ d={ok:false,error:'服务器返回非JSON：'+t.slice(0,200)+'（HTTP '+r.status+'）'}; }
+          return {status:r.status, d:d};
+        });
+      })
+      .then(function(res){
+        if(res.d.ok){ toast('首页配置已保存，已切回首页'); applyHomeCfg(); clearDirty(); show('list'); }
+        else toast(res.d.error||('保存失败 HTTP '+res.status));
+      }).catch(function(e){ toast('网络异常：'+e.message); })
       .finally(function(){ save.disabled=false; save.textContent='保存首页配置'; });
   });
 });
