@@ -52,6 +52,10 @@ export async function onRequest(ctx) {
   if (url.pathname.startsWith('/api/blog') && ctx.request.method === 'GET') return ctx.next();
   // 友链公开读取放行（GET 列表，写操作仍受保护）
   if (url.pathname.startsWith('/api/links') && ctx.request.method === 'GET') return ctx.next();
+  // 首页配置公开读取放行（GET，写操作仍受保护）
+  if (url.pathname.startsWith('/api/home') && ctx.request.method === 'GET') return ctx.next();
+  // 访问统计公开读取放行
+  if (url.pathname.startsWith('/api/stats') && ctx.request.method === 'GET') return ctx.next();
   // DeepSeek 代理放行（密钥在服务端，接口自身校验）
   if (url.pathname.startsWith('/api/deepseek')) return ctx.next();
 
