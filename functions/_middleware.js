@@ -56,6 +56,8 @@ export async function onRequest(ctx) {
   if (url.pathname.startsWith('/api/home') && ctx.request.method === 'GET') return ctx.next();
   // 访问统计公开读取放行
   if (url.pathname.startsWith('/api/stats') && ctx.request.method === 'GET') return ctx.next();
+  // 跨站公告公开读取放行（公告源接口，仅只读最新弹窗公告）
+  if (url.pathname.startsWith('/api/public-notice')) return ctx.next();
   // DeepSeek 代理放行（密钥在服务端，接口自身校验）
   if (url.pathname.startsWith('/api/deepseek')) return ctx.next();
 
