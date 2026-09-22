@@ -9,7 +9,7 @@
  *   4. Cookie ce_auth 携带有效会话（30 天）→ 放行
  *   5. 其余请求 → 401 返回锁屏页面
  *
- * 配置存储：KV（键 creator_auth_config）
+ * 配置存储：KV（键 ffdaz_auth_config）
  *   { enabled:bool, password:string, ipWhitelist:string[], devices:[] }
  * 密码可用 CF 加密密文 ACCESS_PASSWORD 覆盖（env 优先，更安全）
  */

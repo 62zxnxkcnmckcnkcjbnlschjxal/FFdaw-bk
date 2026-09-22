@@ -8,7 +8,7 @@
  * POST /api/auth/config                          更新验证配置（需已授权）
  * GET  /api/auth/privacy                         隐私政策文本页（公开）
  *
- * 配置存 KV（键 creator_auth_config）；密码可用 CF 加密密文 ACCESS_PASSWORD 覆盖（env 优先）
+ * 配置存 KV（键 ffdaz_auth_config）；密码可用 CF 加密密文 ACCESS_PASSWORD 覆盖（env 优先）
  */
 
 const CFG_KEY = 'ffdaz_auth_config';

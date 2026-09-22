@@ -13,8 +13,8 @@
 const KV_KEY = 'creator_blog_data';
 const MAX_BYTES = 512 * 1024;
 
-const AUTH_CFG_KEY = 'creator_auth_config';
-const AUTH_SESS_PREFIX = 'creator_auth_session:';
+const AUTH_CFG_KEY = 'ffdaz_auth_config';
+const AUTH_SESS_PREFIX = 'ffdaz_auth_session:';
 const AUTH_SESS_TTL = 30 * 24 * 3600 * 1000;
 
 async function getAuthConfig(env) {
