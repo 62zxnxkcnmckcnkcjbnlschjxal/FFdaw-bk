@@ -338,6 +338,7 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
   -webkit-mask-size:110px 140px;mask-size:110px 140px;
   -webkit-mask-position:50% 50%;mask-position:50% 50%}
+.fq-hero .fq-clean,.fq-hero .fq-gold-base,.fq-hero .fq-reveal{transform:translateZ(0) scale(1.15);transform-origin:center}
 .fq-hero .fq-scrim{z-index:3;background:linear-gradient(180deg,rgba(20,24,32,.55) 0%,rgba(20,24,32,.12) 45%,rgba(20,24,32,.6) 100%);pointer-events:none}
 .fq-hero .fq-content{position:relative;z-index:4;height:100%;display:flex;flex-direction:column;padding:96px 64px 40px;pointer-events:none}
 .fq-top{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;font-weight:500;letter-spacing:.02em;gap:12px;flex-wrap:wrap}
@@ -357,9 +358,9 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
 .nav.hero-mode{background:transparent;border-bottom-color:transparent;backdrop-filter:none}
 .nav.hero-mode .brand-name,.nav.hero-mode .brand{color:#f0f0ee}
 .nav.hero-mode .brand .logo{color:#f0f0ee}
-.nav.hero-mode .nav-link{color:rgba(240,240,238,.88)}
-.nav.hero-mode .nav-link:hover{color:#fff;background:rgba(255,255,255,.12);border-color:transparent}
-.nav.hero-mode .theme-btn{color:#f0f0ee;border-color:rgba(240,240,238,.35);background:transparent}
+.nav.hero-mode .nav-link{color:rgba(245,245,243,.95)}
+.nav.hero-mode .nav-link:hover{color:#fff;background:rgba(255,255,255,.14);border-color:transparent}
+.nav.hero-mode .theme-btn{color:#fff;border-color:rgba(255,255,255,.85);background:rgba(255,255,255,.14)}
 .nav.hero-mode .nav-link.on{background:#f0f0ee;color:#2b3342}
 /* 向下滚动：hero 淡出上移 + 背景视差 */
 .fq-hero .fq-content{will-change:transform,opacity}
@@ -385,6 +386,15 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
   .post{padding:20px 18px}
   .fq-hero{height:100vh;height:100svh;min-height:520px;margin:calc(-1*(92px + env(safe-area-inset-top) + 26px)) 0 var(--gap)}
   .fq-hero .fq-content{padding:92px 22px 26px}
+  /* 手机端精简文案：只留核心，画面更空灵 */
+  .fq-top .fq-l span:last-child{display:none}   /* 隐藏 visual archive */
+  .fq-top .fq-r{display:none}                    /* 隐藏 ( long exposure / low light ) */
+  .fq-para{display:none}                         /* 隐藏大段英文自述 */
+  .fq-clean,.fq-gold-base,.fq-reveal{transform:translateZ(0) scale(1.22)}
+  .fq-head{margin-top:20px;font-size:clamp(40px,12.5vw,64px)}
+  .fq-bottom{gap:14px}
+  .fq-nw{font-size:15px}
+  .fq-meta{font-size:12.5px;margin-top:14px}
   .fq-top{font-size:13px}
   .fq-top .fq-l{gap:14px}
   .fq-top .fq-pill{padding:3px 14px;font-size:13px}
@@ -1726,7 +1736,7 @@ loadHomeCfg(true);
     var p=Math.min(1,y/h);
     heroContent.style.transform='translateY('+(-p*110)+'px)';
     heroContent.style.opacity=String(Math.max(0,1-p*1.6));
-    for(var i=0;i<layers.length;i++) layers[i].style.transform='translateY('+(p*70)+'px)';
+    for(var i=0;i<layers.length;i++) layers[i].style.transform='translateY('+(p*70)+'px) scale(1.15)';
   }
   function onScroll(){
     if(ticking) return;
