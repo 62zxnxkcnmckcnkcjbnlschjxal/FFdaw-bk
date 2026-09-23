@@ -404,6 +404,28 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
   .fq-nw{font-size:16px}
   .fq-para{font-size:14.5px}
 }
+.status-badge{padding:3px 10px;border-radius:999px;background:var(--danger-soft);color:var(--danger);font-weight:600}
+/* ===== DeepSeek 全屏聊天（电脑+手机） ===== */
+#viewChat{width:100vw;max-width:none;margin-left:calc(50% - 50vw - 28px);margin-right:0;padding:0;border-left:0;border-right:0;border-radius:0;background:var(--card);display:flex;flex-direction:column;min-height:calc(100vh - 96px)}
+#viewChat .view-head{padding:15px 26px}
+#viewChat .chat-wrap{flex:1;height:auto;min-height:0}
+#viewChat .chat-box{flex:1}
+#viewChat .chat-input-wrap{padding:12px 22px 16px}
+#viewChat .chat-presets{padding:10px 22px}
+/* 手机端优化 */
+@media (max-width:860px){
+  .container{padding:0 14px}
+  .hero-card{padding:22px 18px}
+  .b-card{padding:18px 16px}
+  #viewChat{margin-left:calc(50% - 50vw - 14px);min-height:calc(100vh - 74px)}
+  #viewChat .view-head{padding:12px 14px}
+  #viewChat .chat-wrap .chat-input-wrap{padding:10px 12px 12px}
+  #viewChat .chat-wrap .chat-presets{padding:8px 12px}
+}
+@media (max-width:400px){
+  .hero-main h1{font-size:25px}
+  .hero-side h2{font-size:19px}
+}
 </style>
 </head>
 <body>
@@ -684,9 +706,7 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
       <div class="chat-presets" id="chatPresets"></div>
       <div class="chat-img-preview" id="chatImgPreview" hidden></div>
       <div class="chat-key-bar" id="chatKeyBar" hidden>
-        <span class="ks" id="dsKeyLabel">本地密钥：</span>
-        <input type="password" id="dsApiKey" placeholder="sk-...">
-        <button id="dsKeySave">保存</button>
+        <span class="ks" id="dsKeyLabel">正在检测服务器密钥…</span>
       </div>
       <form class="chat-input-wrap" id="chatForm">
         <button type="button" class="chat-img-btn" id="chatImgBtn" title="上传图片（仅视觉模型支持）" hidden>
@@ -1002,8 +1022,6 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
   var input=document.getElementById('chatInput');
   var presetsEl=document.getElementById('chatPresets');
   var keyBar=document.getElementById('chatKeyBar');
-  var keyInp=document.getElementById('dsApiKey');
-  var keySave=document.getElementById('dsKeySave');
   var keyLabel=document.getElementById('dsKeyLabel');
   var modelSel=document.getElementById('dsModelSelect');
   var modelHint=document.getElementById('dsModelHint');
@@ -1011,8 +1029,6 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
   var imgFile=document.getElementById('chatImgFile');
   var imgPrev=document.getElementById('chatImgPreview');
 
-  var localKey='';
-  try{ localKey=localStorage.getItem('ffdaz_dsKey')||''; }catch(e){}
   var savedModel='';
   try{ savedModel=localStorage.getItem('ffdaz_dsModel')||''; }catch(e){}
   if(savedModel==='deepseek/deepseek-flash') savedModel='deepseek-v4-flash'; // 兼容旧版本存储
@@ -1039,13 +1055,18 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
   function isVision(){ var m=curModel()||''; if(!m||m==='auto') return true; return isVisionId(m,''); }
 
   function syncUI(){
+    // 密钥只从服务器读取（Cloudflare Functions 环境变量），前端不再录入/保存密钥
     var p=providerOf();
     var hasEnv=!!envStatus[p];
-    if(keyBar) keyBar.hidden=hasEnv;
-    if(keyLabel) keyLabel.textContent=(p==='auto'?'服务器密钥：':(p==='tencent'?'腾讯云密钥：':'本地密钥：'));
-    if(keyInp){
-      keyInp.placeholder=(p==='auto'?'留空则用服务器环境变量（官方/腾讯自动选择）':(p==='tencent'?'留空则用服务器 TENCENT_API_KEY':'留空则用服务器 DEEPSEEK_API_KEY'));
-      keyInp.value=localKey||'';
+    if(keyBar){
+      keyBar.hidden=hasEnv;
+      if(!hasEnv && keyLabel){
+        keyLabel.textContent=p==='auto'
+          ? '⚠️ 服务器未配置密钥：请在 Cloudflare 后台设置 DEEPSEEK_API_KEY 或 TENCENT_API_KEY 后再使用'
+          : (p==='tencent'
+              ? '⚠️ 服务器未配置 TENCENT_API_KEY：请在 Cloudflare 后台添加后再使用'
+              : '⚠️ 服务器未配置 DEEPSEEK_API_KEY：请在 Cloudflare 后台添加后再使用');
+      }
     }
     if(imgBtn) imgBtn.hidden=!isVision();
     if(imgPrev && !pendingImages.length) imgPrev.hidden=true;
@@ -1106,12 +1127,6 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
       .catch(function(){});
   }
 
-  if(keySave) keySave.addEventListener('click',function(){
-    localKey=String(keyInp?keyInp.value:'').trim();
-    try{ localStorage.setItem('ffdaz_dsKey',localKey); }catch(e){}
-    toast(localKey?'本地密钥已保存（覆盖服务器密钥）':'已清空本地密钥（将使用服务器密钥）');
-    syncUI();
-  });
 
   var PRESETS=['帮我写一份催平台结款的礼貌话术','分析我的收益数据该注意什么','光遇追光计划活动规则有哪些要点'];
   if(presetsEl){
@@ -1216,7 +1231,7 @@ $('edPublish').addEventListener('click',function(){ saveArticle('published'); })
     var ctrl=typeof AbortController!=='undefined'?new AbortController():null;
     var to=ctrl?setTimeout(function(){ try{ctrl.abort();}catch(e){} },45000):null;
     fetch('/api/deepseek',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',
-      body:JSON.stringify({provider:provider,model:model,messages:[{role:'user',content:content}],apiKey:localKey||undefined,stream:false}),
+      body:JSON.stringify({provider:provider,model:model,messages:[{role:'user',content:content}],stream:false}),
       signal:ctrl?ctrl.signal:undefined})
       .then(function(r){
         if(to) clearTimeout(to);
