@@ -41,7 +41,7 @@ a{color:inherit}
 .theme-btn{width:36px;height:36px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .theme-btn:hover{border-color:var(--ink)}
 /* ===== 版心 ===== */
-.container{max-width:1120px;margin:26px auto 10px;padding:0 20px}
+.container{max-width:1320px;margin:30px auto 10px;padding:0 28px}
 /* ===== hero ===== */
 .hero{display:grid;grid-template-columns:1.25fr .9fr;gap:var(--gap);margin-bottom:var(--gap)}
 .hero-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:30px 28px;box-shadow:var(--shadow)}
@@ -65,10 +65,10 @@ a{color:inherit}
 :root.dark .hero-cta{background:var(--lime-ink);color:var(--lime)}
 .hero-cta.ghost{background:transparent;color:var(--lime-ink);border:1.5px solid color-mix(in srgb,var(--lime-ink) 40%,transparent)}
 /* ===== Bento ===== */
-.bento{display:grid;grid-template-columns:1.45fr 1fr;gap:var(--gap);margin-bottom:var(--gap);align-items:start}
-.bento-2{grid-template-columns:1fr 1fr}
+.bento{display:grid;grid-template-columns:1.45fr 1fr;gap:18px;margin-bottom:22px;align-items:stretch}
+..bento-2{grid-template-columns:1fr 1fr}
 .bento-3{grid-template-columns:1fr 1fr 1fr}
-.b-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 22px;box-shadow:var(--shadow);min-width:0}
+.b-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 26px;box-shadow:var(--shadow);min-width:0;display:flex;flex-direction:column}
 .b-label{font-size:10.5px;letter-spacing:2.2px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
 .b-label .ln{display:inline-flex;align-items:center;gap:8px}
 .b-label .ln i{width:7px;height:7px;border-radius:50%;background:var(--lime);border:1.5px solid var(--ink)}
@@ -121,7 +121,7 @@ a{color:inherit}
 .cal-grid .dy{font-size:13.5px;text-align:center;padding:6px 0;border-radius:8px;color:var(--ink)}
 .cal-grid .dy.empty{visibility:hidden}
 .cal-grid .dy.today{background:var(--lime);color:var(--lime-ink);font-weight:800}
-.cal-foot{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);cursor:pointer}
+.cal-foot{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);cursor:pointer}
 .cal-foot i{width:8px;height:8px;border-radius:50%;background:var(--lime);border:1.5px solid var(--ink)}
 /* 签到卡 */
 .ck-eyebrow{font-size:10.5px;letter-spacing:2.2px;color:var(--muted);text-transform:uppercase;margin-bottom:10px}
@@ -132,7 +132,7 @@ a{color:inherit}
 .ck-btn{padding:10px 16px;border-radius:999px;background:var(--ink);color:var(--paper);border:0;font-size:12.5px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s}
 :root.dark .ck-btn{background:var(--lime);color:var(--lime-ink)}
 .ck-btn:disabled{opacity:.5;cursor:default}
-.ck-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--line);margin-top:18px;padding-top:14px;gap:0}
+.ck-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--line);margin-top:auto;padding-top:14px;gap:0}
 .ck-stats>div{text-align:center}
 .ck-stats b{display:block;font-size:22px;font-weight:800}
 .ck-stats span{font-size:10.5px;color:var(--muted);letter-spacing:.5px}
@@ -162,11 +162,11 @@ a{color:inherit}
 .sl-hero .sl-arrow{position:absolute;right:14px;bottom:14px;width:44px;height:44px;border-radius:50%;background:#fff;color:#1a1a1a;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:transform .15s;text-decoration:none}
 .sl-hero .sl-arrow:hover{transform:scale(1.06)}
 .sl-hero .sl-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12.5px;text-align:center;padding:20px}
-.sl-dots{display:flex;gap:6px;justify-content:center;margin-top:10px}
+.sl-dots{display:flex;gap:6px;justify-content:center;margin-top:auto;padding-top:12px}
 .sl-dots i{width:6px;height:6px;border-radius:50%;background:var(--line);cursor:pointer;transition:all .2s;display:inline-block}
 .sl-dots i.on{background:var(--ink);width:18px;border-radius:3px}
 /* 时间天气卡 */
-.tw-card{background:#20301f;color:#f3f4e8;border-radius:18px;padding:22px 22px 18px;box-shadow:0 10px 30px rgba(0,0,0,.15);margin-top:14px}
+.tw-card{background:linear-gradient(150deg,#20301f,#2a3d27);color:#f3f4e8;border-radius:18px;padding:26px 26px 20px;box-shadow:0 10px 30px rgba(0,0,0,.15);display:flex;flex-direction:column;justify-content:space-between}
 body.dark .tw-card{background:#1a2718}
 .tw-top{display:flex;justify-content:space-between;align-items:center;font-size:11px;letter-spacing:.2em;opacity:.85}
 .tw-weather{display:flex;align-items:center;gap:7px;font-size:13px;letter-spacing:.05em}
@@ -296,7 +296,7 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
 /* toast */
 #toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:12px;font-size:13.5px;opacity:0;transition:all .3s;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,.25);pointer-events:none}
 #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-.foot{max-width:1120px;margin:20px auto 34px;padding:0 20px;text-align:center;font-size:11.5px;color:var(--muted)}
+.foot{max-width:1320px;margin:28px auto 42px;padding:0 28px;text-align:center;font-size:11.5px;color:var(--muted)}
 .foot .sep{opacity:.5;margin:0 6px}
 .foot-link{color:var(--muted);text-decoration:none;cursor:pointer}
 .foot-link:hover{color:var(--ink);text-decoration:underline;text-decoration-color:var(--lime);text-decoration-thickness:3px;text-underline-offset:2px}
@@ -518,7 +518,7 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
       </div>
     </div>
 
-    <div class="bento bento-2">
+    <div class="bento bento-3">
       <!-- ON REPEAT -->
       <div class="b-card" id="musCard">
         <div class="b-label"><span class="ln"><i></i><b>ON REPEAT · 此刻的旋律</b></span></div>
