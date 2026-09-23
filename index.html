@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f7f6f2">
 <title>FF大王 · 博客</title>
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Archivo:wght@400;500;700&display=swap">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -325,6 +326,33 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
 .unsaved-bar.show{display:block;animation:pulse 1.5s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 #cfgSave.dirty{background:var(--lime);color:var(--lime-ink);border-color:var(--lime-ink)}
+/* ===== faruq 风格全屏首屏（FF大王） ===== */
+.fq-hero{position:relative;height:100vh;min-height:560px;overflow:hidden;background:#2b3342;color:#f0f0ee;margin-bottom:var(--gap);transform:translateZ(0)}
+.fq-hero *{user-select:none}
+.fq-hero img{pointer-events:none;user-select:none;-webkit-user-drag:none}
+.fq-hero .fq-layer{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transform:translateZ(0)}
+.fq-hero .fq-clean{z-index:0}
+.fq-hero .fq-gold-base{z-index:1;opacity:.1}
+.fq-hero .fq-reveal{z-index:2;opacity:0;transition:opacity .4s ease-out;will-change:opacity;
+  -webkit-mask-image:radial-gradient(closest-side,#000 62%,transparent 100%);mask-image:radial-gradient(closest-side,#000 62%,transparent 100%);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-size:110px 140px;mask-size:110px 140px;
+  -webkit-mask-position:50% 50%;mask-position:50% 50%}
+.fq-hero .fq-scrim{z-index:3;background:linear-gradient(180deg,rgba(20,24,32,.55) 0%,rgba(20,24,32,.12) 45%,rgba(20,24,32,.6) 100%);pointer-events:none}
+.fq-hero .fq-content{position:relative;z-index:4;height:100%;display:flex;flex-direction:column;padding:44px 64px 40px;pointer-events:none}
+.fq-top{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;font-weight:500;letter-spacing:.02em;gap:12px;flex-wrap:wrap}
+.fq-top .fq-l{display:flex;gap:28px}
+.fq-top .fq-pill{border:1.5px solid #f0f0ee;border-radius:999px;padding:4px 20px;font-size:15px}
+.fq-top .fq-r{display:flex;gap:14px}
+.fq-head{margin-top:40px;font-size:clamp(52px,7.4vw,104px);font-weight:500;letter-spacing:-.02em;line-height:.98;text-transform:lowercase}
+.fq-head .fq-row{display:inline-flex;align-items:center;gap:24px}
+.fq-plus{width:.8em;height:.8em;border:1.5px solid #f0f0ee;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.45em;font-weight:400;line-height:1;flex:none;padding-top:1px}
+.fq-bottom{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:48px}
+.fq-nw{font-size:18px;font-weight:500;line-height:1.45;flex:none}
+.fq-para{max-width:560px;font-size:15.5px;line-height:1.6;word-spacing:.15em;text-align:justify}
+.fq-meta{display:flex;justify-content:space-between;margin-top:20px;font-size:14px;letter-spacing:.02em}
+.fq-hero a{color:#f3f2f2;text-decoration:underline;text-underline-offset:3px}
+.fq-hero a:hover{color:#fff}
 /* 响应式 */
 @media (max-width:980px){
   .bento,.bento-2{grid-template-columns:1fr}
@@ -340,6 +368,16 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
   .brand .logo{width:30px;height:30px}
   .theme-btn{width:32px;height:32px}
   .post{padding:20px 18px}
+  .fq-hero{height:100svh;min-height:520px}
+  .fq-hero .fq-content{padding:30px 22px 26px}
+  .fq-top{font-size:13px}
+  .fq-top .fq-l{gap:14px}
+  .fq-top .fq-pill{padding:3px 14px;font-size:13px}
+  .fq-head{margin-top:26px;font-size:clamp(40px,11vw,64px)}
+  .fq-head .fq-row{gap:14px}
+  .fq-bottom{flex-direction:column;align-items:flex-start;gap:22px}
+  .fq-nw{font-size:16px}
+  .fq-para{font-size:14.5px}
 }
 </style>
 </head>
@@ -360,6 +398,30 @@ textarea#edContent{width:100%;min-height:300px;padding:14px;border:1px solid var
 <div class="container">
   <!-- ===== 首页 ===== -->
   <section class="view" id="viewList" style="background:transparent;border:0;box-shadow:none;overflow:visible">
+    <!-- ===== faruq 风格全屏首屏（光标聚光灯揭示金色面具） ===== -->
+    <div class="fq-hero" id="fqHero">
+      <img class="fq-layer fq-clean" src="assets/hero-clean.jpg" alt="" draggable="false">
+      <img class="fq-layer fq-gold-base" src="assets/hero-gold.jpg" alt="" draggable="false">
+      <img class="fq-layer fq-reveal" id="fqReveal" src="assets/hero-gold.jpg" alt="" draggable="false">
+      <div class="fq-layer fq-scrim"></div>
+      <div class="fq-content">
+        <div class="fq-top">
+          <div class="fq-l"><span>FF大王®</span><span>visual archive</span></div>
+          <span class="fq-pill">©2026</span>
+          <div class="fq-r"><span>(</span><span>long exposure</span><span>/</span><span>low light</span><span>)</span></div>
+        </div>
+        <div class="fq-head">stories in light<br>
+          <span class="fq-row"><span class="fq-plus">+</span>motion</span>
+        </div>
+        <div class="fq-bottom">
+          <div class="fq-nw">night work only</div>
+          <div>
+            <p class="fq-para">slow shutters, moving light. i make short visual stories after dark — where motion becomes the subject and light does the drawing. no studio, no staging: just time, left open long enough to leave a trace.</p>
+            <div class="fq-meta"><span>selected work — vol.01</span><span>( scroll ↓ )</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="hero">
       <div class="hero-card hero-main">
         <div class="kicker">DESIGN · CODE · EVERYDAY</div>
@@ -1593,6 +1655,36 @@ document.querySelectorAll('.hero-cta,.more-btn,.back-btn').forEach(function(el){
 
 /* 启动：先拉首页配置并自动渲染（之前是 false，导致刷新后不显示已保存的音乐和切片） */
 loadHomeCfg(true);
+
+/* ===== faruq 风格：光标聚光灯揭示金色面具（仅桌面，触屏显示静态10%金色） ===== */
+(function(){
+  var hero=document.getElementById('fqHero');
+  var reveal=document.getElementById('fqReveal');
+  if(!hero||!reveal) return;
+  if(!window.matchMedia||!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  var tx=0,ty=0,cx=0,cy=0,started=false,raf=null;
+  var HW=55,HH=70; /* 遮罩 110x140 的一半 */
+  function step(){
+    var dx=tx-cx,dy=ty-cy;
+    cx+=dx*0.22; cy+=dy*0.22;
+    var px=Math.round(cx-HW),py=Math.round(cy-HH);
+    reveal.style.maskPosition=px+'px '+py+'px';
+    reveal.style.webkitMaskPosition=px+'px '+py+'px';
+    if(Math.abs(dx)<0.3&&Math.abs(dy)<0.3){ raf=null; return; }
+    raf=requestAnimationFrame(step);
+  }
+  hero.addEventListener('mousemove',function(e){
+    var r=hero.getBoundingClientRect();
+    tx=e.clientX-r.left; ty=e.clientY-r.top;
+    if(!started){ started=true; cx=tx; cy=ty; reveal.style.opacity='1'; }
+    if(raf==null) raf=requestAnimationFrame(step);
+  });
+  hero.addEventListener('mouseleave',function(){
+    reveal.style.opacity='0'; /* 0.4s ease-out 过渡恢复 */
+    started=false;
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+  });
+})();
 
 </script>
 </body>
